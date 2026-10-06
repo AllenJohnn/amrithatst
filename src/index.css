@@ -13,7 +13,7 @@
 
   body {
     background-color: #090909;
-    color: #F3F3EE;
+    color: #F2F2F2;
     font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -31,25 +31,21 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #282828;
+    background: #1F1F1F;
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #282828;
+    background: #333333;
   }
 }
 
 @layer utilities {
   .panel {
-    @apply bg-cyber-dark border border-cyber-border rounded-lg;
+    @apply bg-[#0F0F0F] border border-[#1F1F1F] rounded-lg shadow-sm;
   }
   
   .panel-nested {
-    @apply bg-cyber-card border border-cyber-borderSubtle rounded-md;
-  }
-
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    @apply bg-[#141414] border border-[#1F1F1F] rounded-md shadow-sm;
   }
 }
