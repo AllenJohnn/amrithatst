@@ -24,13 +24,13 @@ const URLInput = ({ onScan, isScanning, defaultValue = "" }) => {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com"
               disabled={isScanning}
-              className="w-full bg-cyber-card border border-cyber-border rounded-md py-2 pl-3 pr-8 font-mono text-sm text-white placeholder-cyber-dim outline-none focus:border-cyber-cyan transition-colors disabled:opacity-50"
+              className="w-full bg-cyber-card border border-cyber-border rounded-md py-2 pl-3 pr-8 font-mono text-sm text-cyber-white placeholder-cyber-dim outline-none focus:border-cyber-accent transition-colors disabled:opacity-50"
             />
             {url && !isScanning && (
               <button
                 type="button"
                 onClick={() => setUrl("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-cyber-dim hover:text-white transition-colors rounded"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-cyber-dim hover:text-cyber-white transition-colors rounded"
               >
                 <X size={14} />
               </button>
@@ -39,7 +39,7 @@ const URLInput = ({ onScan, isScanning, defaultValue = "" }) => {
           <button
             type="submit"
             disabled={!url.trim() || isScanning}
-            className="flex items-center justify-center gap-2 rounded-md bg-white text-black px-4 py-2 font-medium text-sm transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            className="flex items-center justify-center gap-2 rounded-md bg-cyber-accent text-[#10120E] px-4 py-2 font-medium text-sm transition-all hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {isScanning ? (
               <>
@@ -67,7 +67,7 @@ const URLInput = ({ onScan, isScanning, defaultValue = "" }) => {
               onScan(sample.url);
             }}
             disabled={isScanning}
-            className="text-xs text-cyber-dim hover:text-white transition-colors"
+            className="text-xs text-cyber-dim hover:text-cyber-white transition-colors"
           >
             {sample.label}
           </button>

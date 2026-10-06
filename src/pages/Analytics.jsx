@@ -22,10 +22,10 @@ import {
 
 const Analytics = () => {
   const customTooltipStyle = {
-    backgroundColor: '#0D0F12', // cyber-dark
-    border: '1px solid #23272D', // cyber-border
+    backgroundColor: '#0F0F0F', // cyber-dark
+    border: '1px solid #282828', // cyber-border
     borderRadius: '6px',
-    color: '#F1F2F4', // white
+    color: '#F3F3EE', // white
     fontSize: '11px',
     fontFamily: 'JetBrains Mono',
     boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
@@ -34,11 +34,11 @@ const Analytics = () => {
 
   // Muted semantic colors corresponding to tailwind config
   const COLORS = {
-    total: '#8799B5',    // blue/info
-    threats: '#C87878',  // danger
-    phishing: '#C87878',
-    suspicious: '#C6A86A',
-    safe: '#7FA889'
+    total: '#8E9995',    // blue/info
+    threats: '#C77B7B',  // danger
+    phishing: '#C77B7B',
+    suspicious: '#C3A467',
+    safe: '#83A783'
   };
 
   const threatDistribution = THREAT_DISTRIBUTION_DATA.map(item => {
@@ -51,7 +51,7 @@ const Analytics = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-medium text-white flex items-center gap-2">
+        <h1 className="text-xl font-medium text-cyber-white flex items-center gap-2">
           <BarChart3 className="text-cyber-muted" size={20} />
           Telemetry
         </h1>
@@ -70,7 +70,7 @@ const Analytics = () => {
           <div key={i} className="flex-1 p-4">
             <span className="text-[10px] text-cyber-muted font-medium uppercase tracking-wider block mb-2">{metric.label}</span>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-medium text-white font-mono tracking-tight">{metric.value}</span>
+              <span className="text-2xl font-medium text-cyber-white font-mono tracking-tight">{metric.value}</span>
               <span className="text-[10px] text-cyber-dim uppercase">{metric.sub}</span>
             </div>
           </div>
@@ -80,7 +80,7 @@ const Analytics = () => {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-lg border border-cyber-border bg-cyber-dark p-5 lg:col-span-2">
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+            <h3 className="text-sm font-medium text-cyber-white flex items-center gap-2">
               <TrendingUp size={16} className="text-cyber-muted" />
               7-Day Detection Volume
             </h3>
@@ -89,22 +89,12 @@ const Analytics = () => {
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={SCAN_TREND_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={COLORS.total} stopOpacity={0.15} />
-                    <stop offset="95%" stopColor={COLORS.total} stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorThreats" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={COLORS.threats} stopOpacity={0.15} />
-                    <stop offset="95%" stopColor={COLORS.threats} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#23272D" vertical={false} />
-                <XAxis dataKey="day" stroke="#656B74" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-                <YAxis stroke="#656B74" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={customTooltipStyle} cursor={{ stroke: '#2D323A', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                <Area type="monotone" dataKey="total" stroke={COLORS.total} strokeWidth={2} fill="url(#colorTotal)" name="Total Scans" />
-                <Area type="monotone" dataKey="threats" stroke={COLORS.threats} strokeWidth={2} fill="url(#colorThreats)" name="Threats" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#282828" vertical={false} />
+                <XAxis dataKey="day" stroke="#70706A" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
+                <YAxis stroke="#70706A" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={customTooltipStyle} cursor={{ stroke: '#282828', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                <Area type="monotone" dataKey="total" stroke={COLORS.total} strokeWidth={2} fill={COLORS.total} fillOpacity={0.05} name="Total Scans" />
+                <Area type="monotone" dataKey="threats" stroke={COLORS.threats} strokeWidth={2} fill={COLORS.threats} fillOpacity={0.05} name="Threats" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -112,7 +102,7 @@ const Analytics = () => {
 
         <div className="rounded-lg border border-cyber-border bg-cyber-dark p-5">
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+            <h3 className="text-sm font-medium text-cyber-white flex items-center gap-2">
               <ShieldAlert size={16} className="text-cyber-muted" />
               Verdict Distribution
             </h3>
@@ -139,7 +129,7 @@ const Analytics = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
-              <span className="text-xl font-medium text-white font-mono">{
+              <span className="text-xl font-medium text-cyber-white font-mono">{
                 threatDistribution.reduce((acc, curr) => acc + curr.value, 0)
               }</span>
               <span className="text-[10px] text-cyber-muted font-medium uppercase tracking-wider">Total</span>
@@ -153,7 +143,7 @@ const Analytics = () => {
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
                   <span className="text-cyber-muted">{item.name}</span>
                 </div>
-                <span className="text-white font-mono">{item.value}</span>
+                <span className="text-cyber-white font-mono">{item.value}</span>
               </div>
             ))}
           </div>
@@ -162,7 +152,7 @@ const Analytics = () => {
 
       <div className="rounded-lg border border-cyber-border bg-cyber-dark p-5">
         <div className="mb-4">
-          <h3 className="text-sm font-medium text-white flex items-center gap-2">
+          <h3 className="text-sm font-medium text-cyber-white flex items-center gap-2">
             <Target size={16} className="text-cyber-muted" />
             Top Spoofed Brands
           </h3>
@@ -170,9 +160,9 @@ const Analytics = () => {
         <div className="h-[240px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={TARGETED_BRANDS_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#23272D" horizontal={true} vertical={false} />
-              <XAxis type="number" stroke="#656B74" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-              <YAxis dataKey="brand" type="category" stroke="#A0A5AE" fontSize={11} tickLine={false} axisLine={false} width={100} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#282828" horizontal={true} vertical={false} />
+              <XAxis type="number" stroke="#70706A" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
+              <YAxis dataKey="brand" type="category" stroke="#A6A69F" fontSize={11} tickLine={false} axisLine={false} width={100} />
               <Tooltip contentStyle={customTooltipStyle} cursor={{ fill: '#16191E' }} />
               <Bar dataKey="attacks" fill={COLORS.total} radius={[0, 4, 4, 0]} name="Attacks" barSize={20}>
                 {TARGETED_BRANDS_DATA.map((entry, index) => (

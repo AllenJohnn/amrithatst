@@ -28,13 +28,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cyber-black text-white font-sans flex flex-col justify-center items-center p-4 selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-cyber-black text-cyber-white font-sans flex flex-col justify-center items-center p-4 selection:bg-cyber-white selection:text-cyber-black">
       
       <div className="w-full max-w-[380px] space-y-8">
         
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cyber-dark border border-cyber-border">
-            <Shield className="h-6 w-6 text-white" strokeWidth={2} />
+            <Shield className="h-6 w-6 text-cyber-white" strokeWidth={2} />
           </div>
           <div>
             <h1 className="text-xl font-medium tracking-tight">PhishGaurds</h1>
@@ -54,7 +54,7 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="analyst@acme.inc"
-                className="w-full rounded-md border border-cyber-borderSubtle bg-cyber-card py-2 px-3 text-sm text-white outline-none focus:border-white transition-colors"
+                className="w-full rounded-md border border-cyber-borderSubtle bg-cyber-card py-2 px-3 text-sm text-cyber-white outline-none focus:border-white transition-colors"
               />
             </div>
 
@@ -70,14 +70,14 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full rounded-md border border-cyber-borderSubtle bg-cyber-card py-2 px-3 text-sm text-white outline-none focus:border-white transition-colors"
+                className="w-full rounded-md border border-cyber-borderSubtle bg-cyber-card py-2 px-3 text-sm text-cyber-white outline-none focus:border-white transition-colors"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 rounded-md bg-white text-black py-2 text-sm font-medium transition-colors hover:bg-gray-200 disabled:opacity-50 mt-2"
+              className="w-full flex items-center justify-center gap-2 rounded-md bg-cyber-accent text-[#10120E] py-2 text-sm font-medium transition-all hover:bg-opacity-90 disabled:opacity-50 mt-2"
             >
               <span>{isLoading ? 'Authenticating...' : 'Sign In'}</span>
             </button>
@@ -87,7 +87,7 @@ const Login = () => {
             <button
               type="button"
               onClick={handleDemoLogin}
-              className="w-full flex items-center justify-center gap-2 rounded-md border border-cyber-border bg-cyber-card py-2 text-sm font-medium text-cyber-muted transition-colors hover:bg-cyber-cardHover hover:text-white"
+              className="w-full flex items-center justify-center gap-2 rounded-md border border-cyber-border bg-cyber-card py-2 text-sm font-medium text-cyber-muted transition-colors hover:bg-cyber-cardHover hover:text-cyber-white"
             >
               Demo Access <ArrowRight size={14} />
             </button>

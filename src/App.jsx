@@ -18,7 +18,7 @@ function AppLayout() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-cyber-black text-cyber-white selection:bg-cyber-cyan/30 selection:text-white font-sans overflow-hidden">
+    <div className="flex h-screen w-full bg-cyber-black text-cyber-white selection:bg-cyber-accent/30 selection:text-cyber-white font-sans overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         <Navbar />

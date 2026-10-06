@@ -55,7 +55,7 @@ const ScanHistory = () => {
       <div className={cn("flex-1 flex flex-col space-y-4 transition-all duration-300", selectedScan ? "pr-[400px]" : "pr-0")}>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h1 className="text-xl font-medium text-white flex items-center gap-2">
+            <h1 className="text-xl font-medium text-cyber-white flex items-center gap-2">
               <History className="text-cyber-muted" size={20} />
               Audit Log
             </h1>
@@ -68,7 +68,7 @@ const ScanHistory = () => {
             <button
               onClick={handleExportCSV}
               disabled={scans.length === 0}
-              className="flex items-center gap-2 rounded-md border border-cyber-border bg-cyber-card px-3 py-1.5 text-xs font-medium text-white hover:bg-cyber-cardHover transition-colors disabled:opacity-40"
+              className="flex items-center gap-2 rounded-md border border-cyber-border bg-cyber-card px-3 py-1.5 text-xs font-medium text-cyber-white hover:bg-cyber-cardHover transition-colors disabled:opacity-40"
             >
               <Download size={14} />
               <span>Export CSV</span>
@@ -92,7 +92,7 @@ const ScanHistory = () => {
               placeholder="Search domain or keyword..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-md border border-cyber-borderSubtle bg-cyber-card py-1.5 pl-9 pr-3 text-sm font-mono text-white placeholder-cyber-dim outline-none focus:border-cyber-cyan transition-colors"
+              className="w-full rounded-md border border-cyber-borderSubtle bg-cyber-card py-1.5 pl-9 pr-3 text-sm font-mono text-cyber-white placeholder-cyber-dim outline-none focus:border-cyber-accent transition-colors"
             />
           </div>
 
@@ -104,8 +104,8 @@ const ScanHistory = () => {
                 className={cn(
                   "rounded-md px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider font-medium transition-colors whitespace-nowrap",
                   filterStatus === status
-                    ? "bg-white text-cyber-black"
-                    : "bg-cyber-card text-cyber-muted border border-cyber-border hover:bg-cyber-cardHover hover:text-white"
+                    ? "bg-cyber-white text-cyber-black"
+                    : "bg-cyber-card text-cyber-muted border border-cyber-border hover:bg-cyber-cardHover hover:text-cyber-white"
                 )}
               >
                 {status}
@@ -138,7 +138,7 @@ const ScanHistory = () => {
                       )}
                     >
                       <td className="py-3 px-4 max-w-sm">
-                        <div className="font-mono text-xs text-white truncate transition-colors group-hover:text-cyber-cyan">
+                        <div className="font-mono text-xs text-cyber-white truncate transition-colors group-hover:text-cyber-accent">
                           {scan.url}
                         </div>
                         <div className="text-[11px] text-cyber-dim mt-0.5 truncate">{scan.domain}</div>
@@ -150,7 +150,7 @@ const ScanHistory = () => {
                         <span className={cn(
                           "font-mono text-xs px-2 py-0.5 rounded",
                           scan.riskScore > 70 ? 'text-cyber-danger' : 
-                          scan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-mint'
+                          scan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-success'
                         )}>
                           {scan.riskScore}
                         </span>
@@ -171,7 +171,7 @@ const ScanHistory = () => {
               <div className="h-12 w-12 rounded-full border border-cyber-borderSubtle bg-cyber-card flex items-center justify-center mb-3">
                 <AlertCircle size={20} className="text-cyber-dim" />
               </div>
-              <h3 className="text-sm font-medium text-white mb-1">No Records Found</h3>
+              <h3 className="text-sm font-medium text-cyber-white mb-1">No Records Found</h3>
               <p className="text-xs text-cyber-muted">No scan logs match your current filters.</p>
             </div>
           )}
@@ -188,7 +188,7 @@ const ScanHistory = () => {
             className="absolute top-0 right-0 h-full w-[400px] border-l border-cyber-border bg-cyber-dark z-20 flex flex-col"
           >
             <div className="flex items-center justify-between border-b border-cyber-border p-4">
-              <h3 className="text-sm font-medium text-white">Scan Details</h3>
+              <h3 className="text-sm font-medium text-cyber-white">Scan Details</h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
@@ -202,7 +202,7 @@ const ScanHistory = () => {
                 </button>
                 <button
                   onClick={() => setSelectedScan(null)}
-                  className="rounded p-1.5 text-cyber-muted hover:text-white hover:bg-cyber-card transition-colors"
+                  className="rounded p-1.5 text-cyber-muted hover:text-cyber-white hover:bg-cyber-card transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -219,7 +219,7 @@ const ScanHistory = () => {
                 <div>
                   <span className="text-[11px] text-cyber-dim uppercase tracking-wider font-medium mb-1.5 block">Target URL</span>
                   <div className="rounded-md border border-cyber-borderSubtle bg-cyber-card p-3">
-                    <span className="text-white break-all text-xs font-mono">{selectedScan.url}</span>
+                    <span className="text-cyber-white break-all text-xs font-mono">{selectedScan.url}</span>
                   </div>
                 </div>
               </div>
@@ -230,12 +230,12 @@ const ScanHistory = () => {
                   <span className={cn(
                     "text-xl font-medium font-mono",
                     selectedScan.riskScore > 70 ? 'text-cyber-danger' : 
-                    selectedScan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-mint'
+                    selectedScan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-success'
                   )}>{selectedScan.riskScore}</span>
                 </div>
                 <div className="rounded-md border border-cyber-borderSubtle bg-cyber-card p-3">
                   <span className="text-[11px] text-cyber-dim uppercase tracking-wider font-medium block mb-1">Confidence</span>
-                  <span className="text-xl font-medium text-white font-mono">{selectedScan.confidence}%</span>
+                  <span className="text-xl font-medium text-cyber-white font-mono">{selectedScan.confidence}%</span>
                 </div>
               </div>
 
@@ -252,7 +252,7 @@ const ScanHistory = () => {
                   "rounded-md border p-3 text-xs",
                   selectedScan.status === 'phishing' ? "border-cyber-danger/20 bg-cyber-danger/10 text-cyber-danger" :
                   selectedScan.status === 'suspicious' ? "border-cyber-warning/20 bg-cyber-warning/10 text-cyber-warning" :
-                  "border-cyber-mint/20 bg-cyber-mint/10 text-cyber-mint"
+                  "border-cyber-success/20 bg-cyber-success/10 text-cyber-success"
                 )}>
                   {selectedScan.recommendation}
                 </div>
@@ -263,15 +263,15 @@ const ScanHistory = () => {
                 <div className="rounded-md border border-cyber-borderSubtle bg-cyber-card p-3 font-mono text-[11px] text-cyber-muted space-y-2">
                   <div className="flex justify-between">
                     <span>ID:</span>
-                    <span className="text-white">{selectedScan.id}</span>
+                    <span className="text-cyber-white">{selectedScan.id}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Domain:</span>
-                    <span className="text-white">{selectedScan.domain}</span>
+                    <span className="text-cyber-white">{selectedScan.domain}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Timestamp:</span>
-                    <span className="text-white">{selectedScan.timestamp}</span>
+                    <span className="text-cyber-white">{selectedScan.timestamp}</span>
                   </div>
                 </div>
               </div>

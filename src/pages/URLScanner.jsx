@@ -40,7 +40,7 @@ const URLScanner = () => {
       <div className="flex-1 flex flex-col gap-6">
         
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold text-white">URL Analysis</h1>
+          <h1 className="text-xl font-semibold text-cyber-white">URL Analysis</h1>
           <p className="text-sm text-cyber-muted">
             Enter a URL to evaluate its security characteristics using the analysis engine.
           </p>
@@ -62,12 +62,12 @@ const URLScanner = () => {
                     ) : activeScan.status === 'suspicious' ? (
                       <AlertTriangle className="text-cyber-warning h-6 w-6" />
                     ) : (
-                      <ShieldCheck className="text-cyber-mint h-6 w-6" />
+                      <ShieldCheck className="text-cyber-success h-6 w-6" />
                     )}
                     <h2 className={cn(
                       "text-2xl font-bold tracking-tight",
                       activeScan.status === 'phishing' ? "text-cyber-danger" : 
-                      activeScan.status === 'suspicious' ? "text-cyber-warning" : "text-cyber-mint"
+                      activeScan.status === 'suspicious' ? "text-cyber-warning" : "text-cyber-success"
                     )}>
                       {activeScan.status === 'phishing' ? "PHISHING" : 
                        activeScan.status === 'suspicious' ? "SUSPICIOUS" : "SAFE"}
@@ -76,17 +76,17 @@ const URLScanner = () => {
                 </div>
 
                 <div className="flex items-center gap-2 bg-cyber-card border border-cyber-border rounded px-3 py-1.5 max-w-xl">
-                  <span className="font-mono text-sm text-white truncate flex-1">
+                  <span className="font-mono text-sm text-cyber-white truncate flex-1">
                     {activeScan.url}
                   </span>
                   <button
                     onClick={() => handleCopy(activeScan.url)}
-                    className="p-1 text-cyber-muted hover:text-white transition-colors rounded hover:bg-cyber-dark"
+                    className="p-1 text-cyber-muted hover:text-cyber-white transition-colors rounded hover:bg-cyber-dark"
                     title="Copy URL"
                   >
                     <Copy size={14} />
                   </button>
-                  {copied && <span className="text-[10px] text-cyber-cyan font-mono">Copied</span>}
+                  {copied && <span className="text-[10px] text-cyber-accent font-mono">Copied</span>}
                 </div>
               </div>
 
@@ -96,7 +96,7 @@ const URLScanner = () => {
                   <span className={cn(
                     "text-4xl font-bold font-mono tracking-tighter",
                     activeScan.riskScore > 70 ? "text-cyber-danger" : 
-                    activeScan.riskScore > 35 ? "text-cyber-warning" : "text-cyber-mint"
+                    activeScan.riskScore > 35 ? "text-cyber-warning" : "text-cyber-success"
                   )}>
                     {activeScan.riskScore}
                   </span>
@@ -108,21 +108,21 @@ const URLScanner = () => {
                   <div className={cn(
                     "h-full rounded-full",
                     activeScan.riskScore > 70 ? "bg-cyber-danger" : 
-                    activeScan.riskScore > 35 ? "bg-cyber-warning" : "bg-cyber-mint"
+                    activeScan.riskScore > 35 ? "bg-cyber-warning" : "bg-cyber-success"
                   )} style={{ width: `${activeScan.riskScore}%`}} />
                 </div>
               </div>
             </div>
 
             <div className="p-6 space-y-3">
-              <span className="text-xs font-semibold text-white uppercase tracking-wider">Analysis Explanation</span>
+              <span className="text-xs font-semibold text-cyber-white uppercase tracking-wider">Analysis Explanation</span>
               <p className="text-sm text-cyber-muted leading-relaxed">
                 {activeScan.aiExplanation}
               </p>
             </div>
 
             <div className="p-6 space-y-3">
-              <span className="text-xs font-semibold text-white uppercase tracking-wider">Directive</span>
+              <span className="text-xs font-semibold text-cyber-white uppercase tracking-wider">Directive</span>
               <div className="flex items-start gap-3 text-sm text-cyber-muted">
                 <Terminal size={16} className="mt-0.5 shrink-0" />
                 <p>{activeScan.recommendation}</p>
@@ -137,7 +137,7 @@ const URLScanner = () => {
         
         {/* Status Panel */}
         <div className="panel p-5 flex flex-col gap-4">
-          <h2 className="text-xs font-semibold text-white uppercase tracking-wider">Analysis Status</h2>
+          <h2 className="text-xs font-semibold text-cyber-white uppercase tracking-wider">Analysis Status</h2>
           
           <div className="flex flex-col gap-3">
             {isScanning ? (
@@ -147,13 +147,13 @@ const URLScanner = () => {
                 return (
                   <div key={stage.step} className="flex items-center gap-3 text-sm">
                     {isDone ? (
-                      <CheckCircle2 size={16} className="text-cyber-mint" />
+                      <CheckCircle2 size={16} className="text-cyber-success" />
                     ) : isCurrent ? (
-                      <div className="h-4 w-4 rounded-full border-2 border-cyber-cyan border-t-transparent animate-spin" />
+                      <div className="h-4 w-4 rounded-full border-2 border-cyber-accent border-t-transparent animate-spin" />
                     ) : (
                       <div className="h-4 w-4 rounded-full border-2 border-cyber-border" />
                     )}
-                    <span className={isCurrent ? "text-white" : "text-cyber-muted"}>{stage.label}</span>
+                    <span className={isCurrent ? "text-cyber-white" : "text-cyber-muted"}>{stage.label}</span>
                   </div>
                 );
               })
@@ -161,19 +161,19 @@ const URLScanner = () => {
               <>
                 <div className="flex justify-between items-center py-1.5 border-b border-cyber-border/50 text-sm">
                   <span className="text-cyber-muted">Status</span>
-                  <span className="text-cyber-mint font-medium">Complete</span>
+                  <span className="text-cyber-success font-medium">Complete</span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-cyber-border/50 text-sm">
                   <span className="text-cyber-muted">Engine</span>
-                  <span className="text-white">Random Forest</span>
+                  <span className="text-cyber-white">Random Forest</span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-cyber-border/50 text-sm">
                   <span className="text-cyber-muted">Confidence</span>
-                  <span className="text-white font-mono">{activeScan.confidence}%</span>
+                  <span className="text-cyber-white font-mono">{activeScan.confidence}%</span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-cyber-border/50 text-sm">
                   <span className="text-cyber-muted">Latency</span>
-                  <span className="text-white font-mono">34ms</span>
+                  <span className="text-cyber-white font-mono">34ms</span>
                 </div>
               </>
             ) : (
@@ -185,34 +185,34 @@ const URLScanner = () => {
         {/* Evidence Panel */}
         {!isScanning && activeScan && (
           <div className="panel p-5 flex flex-col gap-4">
-            <h2 className="text-xs font-semibold text-white uppercase tracking-wider">Feature Evidence</h2>
+            <h2 className="text-xs font-semibold text-cyber-white uppercase tracking-wider">Feature Evidence</h2>
             
             <div className="flex flex-col gap-2.5 text-sm font-mono">
               <div className="flex justify-between items-center bg-cyber-card px-2.5 py-1.5 rounded">
                 <span className="text-cyber-muted">URL Length</span>
-                <span className="text-white">{activeScan.features.urlLength}</span>
+                <span className="text-cyber-white">{activeScan.features.urlLength}</span>
               </div>
               <div className="flex justify-between items-center bg-cyber-card px-2.5 py-1.5 rounded">
                 <span className="text-cyber-muted">Entropy</span>
-                <span className="text-white">{activeScan.riskScore > 50 ? 'High' : 'Normal'}</span>
+                <span className="text-cyber-white">{activeScan.riskScore > 50 ? 'High' : 'Normal'}</span>
               </div>
               <div className="flex justify-between items-center bg-cyber-card px-2.5 py-1.5 rounded">
                 <span className="text-cyber-muted">TLD Risk</span>
-                <span className="text-white">{activeScan.features.tldRisk}</span>
+                <span className="text-cyber-white">{activeScan.features.tldRisk}</span>
               </div>
               <div className="flex justify-between items-center bg-cyber-card px-2.5 py-1.5 rounded">
                 <span className="text-cyber-muted">HTTPS</span>
-                <span className={activeScan.features.hasHttps ? "text-cyber-mint" : "text-cyber-danger"}>
+                <span className={activeScan.features.hasHttps ? "text-cyber-success" : "text-cyber-danger"}>
                   {activeScan.features.hasHttps ? 'Present' : 'Missing'}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-cyber-card px-2.5 py-1.5 rounded">
                 <span className="text-cyber-muted">Suspicious Tokens</span>
-                <span className="text-white">{activeScan.features.suspiciousWords?.length || 0}</span>
+                <span className="text-cyber-white">{activeScan.features.suspiciousWords?.length || 0}</span>
               </div>
               <div className="flex justify-between items-center bg-cyber-card px-2.5 py-1.5 rounded">
                 <span className="text-cyber-muted">Host Pattern</span>
-                <span className={activeScan.features.hasIp ? "text-cyber-danger" : "text-white"}>
+                <span className={activeScan.features.hasIp ? "text-cyber-danger" : "text-cyber-white"}>
                   {activeScan.features.hasIp ? 'IP' : 'Domain'}
                 </span>
               </div>

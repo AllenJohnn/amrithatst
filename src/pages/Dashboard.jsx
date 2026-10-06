@@ -22,7 +22,7 @@ const Dashboard = () => {
     <div className="flex flex-col gap-6 max-w-6xl">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold text-white">Security Overview</h1>
+        <h1 className="text-xl font-semibold text-cyber-white">Security Overview</h1>
         <p className="text-sm text-cyber-muted">
           Real-time visibility into URL analysis, threat classifications, and detection activity.
         </p>
@@ -33,7 +33,7 @@ const Dashboard = () => {
         <div className="flex-1 p-4 flex flex-col justify-between">
           <span className="text-xs text-cyber-muted font-medium mb-1 uppercase tracking-wider">Total Scans</span>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-mono text-white">{stats.totalScans}</span>
+            <span className="text-2xl font-mono text-cyber-white">{stats.totalScans}</span>
           </div>
         </div>
         <div className="flex-1 p-4 flex flex-col justify-between">
@@ -53,7 +53,7 @@ const Dashboard = () => {
           <span className="text-xs text-cyber-muted font-medium mb-1 uppercase tracking-wider">Model Confidence</span>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-mono text-cyber-white">{stats.detectionRate}</span>
-            <span className="text-xs text-cyber-mint bg-cyber-mint/10 px-1.5 rounded">Stable</span>
+            <span className="text-xs text-cyber-success bg-cyber-success/10 px-1.5 rounded">Stable</span>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@ const Dashboard = () => {
           {/* Quick Scan */}
           <div className="panel p-5 flex flex-col gap-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-sm font-semibold text-white">Target Analysis</h2>
+              <h2 className="text-sm font-semibold text-cyber-white">Target Analysis</h2>
             </div>
             <URLInput onScan={handleQuickScan} isScanning={isScanning} />
           </div>
@@ -74,10 +74,10 @@ const Dashboard = () => {
           {/* Recent Scans */}
           <div className="panel flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-cyber-border">
-              <h2 className="text-sm font-semibold text-white">Recent Detections</h2>
+              <h2 className="text-sm font-semibold text-cyber-white">Recent Detections</h2>
               <button
                 onClick={() => navigate('/history')}
-                className="text-xs text-cyber-muted hover:text-white flex items-center gap-1 transition-colors"
+                className="text-xs text-cyber-muted hover:text-cyber-white flex items-center gap-1 transition-colors"
               >
                 View full log <ArrowRight size={12} />
               </button>
@@ -96,7 +96,7 @@ const Dashboard = () => {
                     {recentScans.map((scan) => (
                       <tr key={scan.id} className="hover:bg-cyber-cardHover transition-colors cursor-pointer" onClick={() => navigate('/history')}>
                         <td className="px-4 py-3">
-                          <div className="font-mono text-white text-xs truncate max-w-[250px]">{scan.url}</div>
+                          <div className="font-mono text-cyber-white text-xs truncate max-w-[250px]">{scan.url}</div>
                           <div className="text-[11px] text-cyber-muted mt-0.5">{scan.domain}</div>
                         </td>
                         <td className="px-4 py-3">
@@ -104,7 +104,7 @@ const Dashboard = () => {
                         </td>
                         <td className="px-4 py-3 text-right">
                           <span className={`font-mono text-xs ${
-                            scan.riskScore > 70 ? 'text-cyber-danger' : scan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-mint'
+                            scan.riskScore > 70 ? 'text-cyber-danger' : scan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-success'
                           }`}>
                             {scan.riskScore}
                           </span>
@@ -126,7 +126,7 @@ const Dashboard = () => {
         <div className="w-full lg:w-80 flex flex-col gap-6">
           {/* Security Posture */}
           <div className="panel p-4 flex flex-col gap-4">
-            <h2 className="text-sm font-semibold text-white uppercase tracking-wider text-xs">Security Posture</h2>
+            <h2 className="text-sm font-semibold text-cyber-white uppercase tracking-wider text-xs">Security Posture</h2>
             <div className="flex flex-col gap-3 text-sm">
               <div className="flex justify-between items-center py-2 border-b border-cyber-border/50">
                 <span className="text-cyber-muted">Threat Level</span>
@@ -134,18 +134,18 @@ const Dashboard = () => {
               </div>
               <div className="flex justify-between items-center py-2 border-b border-cyber-border/50">
                 <span className="text-cyber-muted">Analysis Engine</span>
-                <span className="text-cyber-mint font-medium">Operational</span>
+                <span className="text-cyber-success font-medium">Operational</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-cyber-border/50">
                 <span className="text-cyber-muted">Last Detection</span>
-                <span className="text-white font-mono text-xs">17:42 UTC</span>
+                <span className="text-cyber-white font-mono text-xs">17:42 UTC</span>
               </div>
             </div>
           </div>
 
           {/* Threat Distribution */}
           <div className="panel p-4 flex flex-col gap-4">
-            <h2 className="text-sm font-semibold text-white uppercase tracking-wider text-xs">Active Vectors</h2>
+            <h2 className="text-sm font-semibold text-cyber-white uppercase tracking-wider text-xs">Active Vectors</h2>
             <div className="flex flex-col gap-3">
               <div>
                 <div className="flex justify-between text-xs mb-1">
@@ -171,7 +171,7 @@ const Dashboard = () => {
                   <span className="text-cyber-muted font-mono">14%</span>
                 </div>
                 <div className="h-1 w-full bg-cyber-card rounded-full overflow-hidden">
-                  <div className="h-full bg-cyber-cyan rounded-full" style={{ width: '14%' }}></div>
+                  <div className="h-full bg-cyber-accent rounded-full" style={{ width: '14%' }}></div>
                 </div>
               </div>
             </div>
