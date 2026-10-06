@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,64 +12,63 @@
   }
 
   body {
-    background-color: #080B11;
+    background-color: #02040A;
     background-image: 
-      radial-gradient(ellipse at 50% 0%, rgba(0, 242, 254, 0.08) 0%, transparent 60%),
-      radial-gradient(circle at 100% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 40%),
-      radial-gradient(circle at 0% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+      radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
     background-attachment: fixed;
-    color: #ffffff;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #F8FAFC; /* slate-50 */
+    font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+  /* Refined Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1E293B;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
   }
 }
 
-/* Custom Sleek Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+@layer utilities {
+  .glass-panel {
+    @apply bg-cyber-card/80 backdrop-blur-xl border border-cyber-border;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .glass-panel-hover {
+    @apply hover:bg-cyber-cardHover/90 hover:border-cyber-borderHigh transition-all duration-300;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400;
+  }
+
+  .gradient-cyan-blue {
+    @apply bg-gradient-to-r from-cyber-cyan to-cyber-blue;
+  }
+  
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: #080B11;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 9999px;
-  border: 1px solid rgba(0, 242, 254, 0.2);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #00F2FE;
-}
-
-/* Cyber Ambient Grid */
-.cyber-grid {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(0, 242, 254, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 242, 254, 0.035) 1px, transparent 1px);
-}
-
-/* Glassmorphism helpers */
-.glass-panel {
-  background: rgba(17, 23, 38, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(30, 41, 59, 0.8);
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, #ffffff 30%, #94A3B8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-cyan-blue {
-  background: linear-gradient(135deg, #00F2FE 0%, #38BDF8 100%);
+/* Subtle dot background for that command center feel */
+.bg-grid-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
 }

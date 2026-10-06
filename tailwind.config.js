@@ -6,38 +6,59 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+      },
       colors: {
         cyber: {
-          black: "#080B11",   // Deep Obsidian Void
-          dark: "#0C111D",    // Polished Slate Panel
-          card: "#111726",    // Elevated Glass Card
-          cardHover: "#161F33",
-          border: "#1E293B",  // Crisp Slate Border
-          green: "#00F2FE",   // Vibrant Electric Cyan
-          cyan: "#00F2FE",    // Primary Radiant Cyan
-          blue: "#38BDF8",    // Sky Blue
-          indigo: "#6366F1",  // Electric Indigo Accent
-          violet: "#8B5CF6",  // AI Radar Violet
-          mint: "#00F59B",    // Luminous Safe Mint
-          muted: "#94A3B8",   // Clean Slate 400 Text
-          dim: "#64748B",     // Subtle Muted Slate 500
-          danger: "#FF2E63",  // High-Voltage Threat Crimson
-          warning: "#FFB703", // Radiant Caution Amber
+          black: "#02040A",   // Deeper than slate-950
+          dark: "#080C16",    // App shell background
+          card: "#0D1321",    // Surface level 1
+          cardHover: "#121A2D", // Surface hover
+          border: "#1E293B",  // Borders
+          borderHigh: "#334155", // Hover borders
+          
+          // Accent colors
+          cyan: "#00E5FF",    // Primary interactive
+          blue: "#0070F3",    // Vercel blue
+          indigo: "#6366F1",  // Subtle highlights
+          violet: "#8B5CF6",  // AI/Machine Learning cues
+          
+          // Semantic
+          mint: "#10B981",    // Safe / Green
+          muted: "#94A3B8",   // Secondary text
+          dim: "#475569",     // Disabled/Subtle text
+          danger: "#F43F5E",  // Threat/Red
+          warning: "#F59E0B", // Suspicious/Amber
         },
       },
       backgroundImage: {
-        'cyan-blue': 'linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%)',
-        'violet-cyan': 'linear-gradient(135deg, #8B5CF6 0%, #00F2FE 100%)',
-        'threat-gradient': 'linear-gradient(135deg, #FF2E63 0%, #FF5E7E 100%)',
-        'safe-gradient': 'linear-gradient(135deg, #00F59B 0%, #00D287 100%)',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        'cyber-gradient': 'linear-gradient(135deg, #00E5FF 0%, #0070F3 100%)',
       },
       boxShadow: {
-        glow: "0 0 25px rgba(0, 242, 254, 0.22)",
-        'glow-lg': "0 0 40px rgba(0, 242, 254, 0.35)",
-        'glow-violet': "0 0 30px rgba(139, 92, 246, 0.25)",
-        'glow-danger': "0 0 30px rgba(255, 46, 99, 0.35)",
-        'glow-mint': "0 0 30px rgba(0, 245, 155, 0.30)",
+        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+        'glow-sm': '0 0 15px -3px var(--tw-shadow-color)',
+        'glow-md': '0 0 25px -5px var(--tw-shadow-color)',
+        'glow-lg': '0 0 40px -10px var(--tw-shadow-color)',
       },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'scanline': 'scanline 2s linear infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        scanline: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100%)' },
+        }
+      }
     },
   },
   plugins: [],
