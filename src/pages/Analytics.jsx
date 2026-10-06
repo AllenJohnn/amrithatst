@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import {
   AreaChart,
   Area,
@@ -23,171 +22,168 @@ import {
 
 const Analytics = () => {
   const customTooltipStyle = {
-    backgroundColor: '#0D1321', // cyber-card
-    border: '1px solid #1E293B', // cyber-border
-    borderRadius: '12px',
-    color: '#ffffff',
-    fontSize: '12px',
+    backgroundColor: '#0D0F12', // cyber-dark
+    border: '1px solid #23272D', // cyber-border
+    borderRadius: '6px',
+    color: '#F1F2F4', // white
+    fontSize: '11px',
     fontFamily: 'JetBrains Mono',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+    padding: '8px 12px'
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+  // Muted semantic colors corresponding to tailwind config
+  const COLORS = {
+    total: '#8799B5',    // blue/info
+    threats: '#C87878',  // danger
+    phishing: '#C87878',
+    suspicious: '#C6A86A',
+    safe: '#7FA889'
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 }
-  };
+  const threatDistribution = THREAT_DISTRIBUTION_DATA.map(item => {
+    let color = COLORS.safe;
+    if (item.name === 'Phishing') color = COLORS.phishing;
+    if (item.name === 'Suspicious') color = COLORS.suspicious;
+    return { ...item, color };
+  });
 
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="space-y-6"
-    >
-      <motion.div variants={itemVariants} className="pt-2">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="rounded bg-cyber-cyan/10 px-2 py-0.5 text-[10px] font-mono font-semibold tracking-wider text-cyber-cyan border border-cyber-cyan/20 uppercase">
-            TELEMETRY DASHBOARD
-          </span>
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-          <BarChart3 className="text-cyber-cyan" size={28} />
-          Threat Analytics
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-medium text-white flex items-center gap-2">
+          <BarChart3 className="text-cyber-muted" size={20} />
+          Telemetry
         </h1>
-        <p className="mt-1 text-sm text-cyber-muted max-w-2xl">
-          Aggregated heuristic trends, attack distributions, and Random Forest classifier evaluation metrics.
+        <p className="mt-1 text-sm text-cyber-muted">
+          Aggregated heuristic trends and threat distribution metrics.
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex overflow-hidden rounded-lg border border-cyber-border bg-cyber-dark divide-x divide-cyber-border">
         {[
-          { label: "MODEL ACCURACY", value: "94.7%", sub: "CV Score", desc: "Evaluated across 40k URLs", highlight: true },
-          { label: "FALSE POSITIVE RATE", value: "1.2%", sub: "Optimal", desc: "Low benign blocking" },
-          { label: "INFERENCE LATENCY", value: "34ms", sub: "avg", desc: "Lexical token extraction", highlight: true },
-          { label: "FEATURE VECTORS", value: "18", sub: "Dims", desc: "Entropy, TLD, lexical" }
+          { label: "MODEL ACCURACY", value: "94.7%", sub: "CV Score" },
+          { label: "FALSE POSITIVE RATE", value: "1.2%", sub: "Optimal" },
+          { label: "INFERENCE LATENCY", value: "34ms", sub: "avg" },
+          { label: "FEATURE VECTORS", value: "18", sub: "Dims" }
         ].map((metric, i) => (
-          <div key={i} className="glass-panel glass-panel-hover rounded-xl p-5 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-cyber-cyan/5 rounded-full blur-xl transition-all duration-500 group-hover:bg-cyber-cyan/10" />
-            <span className="text-[10px] text-cyber-dim font-mono block tracking-wider uppercase font-bold">{metric.label}</span>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className={`text-3xl font-bold font-mono tracking-tight ${metric.highlight ? 'text-cyber-cyan' : 'text-white'}`}>
-                {metric.value}
-              </span>
-              <span className="text-xs text-cyber-muted font-mono">{metric.sub}</span>
+          <div key={i} className="flex-1 p-4">
+            <span className="text-[10px] text-cyber-muted font-medium uppercase tracking-wider block mb-2">{metric.label}</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-medium text-white font-mono tracking-tight">{metric.value}</span>
+              <span className="text-[10px] text-cyber-dim uppercase">{metric.sub}</span>
             </div>
-            <p className="mt-1.5 text-[11px] text-cyber-dim uppercase tracking-wider">{metric.desc}</p>
           </div>
         ))}
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <motion.div variants={itemVariants} className="glass-panel rounded-xl p-6 lg:col-span-2">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider font-mono">
-                <TrendingUp size={16} className="text-cyber-cyan" />
-                7-Day Detection Volume
-              </h3>
-              <p className="text-xs text-cyber-muted mt-1">Total requests vs identified threats</p>
-            </div>
+        <div className="rounded-lg border border-cyber-border bg-cyber-dark p-5 lg:col-span-2">
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <TrendingUp size={16} className="text-cyber-muted" />
+              7-Day Detection Volume
+            </h3>
           </div>
 
-          <div className="h-[300px] w-full">
+          <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={SCAN_TREND_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00E5FF" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#00E5FF" stopOpacity={0} />
+                    <stop offset="5%" stopColor={COLORS.total} stopOpacity={0.15} />
+                    <stop offset="95%" stopColor={COLORS.total} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorThreats" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F43F5E" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#F43F5E" stopOpacity={0} />
+                    <stop offset="5%" stopColor={COLORS.threats} stopOpacity={0.15} />
+                    <stop offset="95%" stopColor={COLORS.threats} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
-                <XAxis dataKey="day" stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-                <YAxis stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={customTooltipStyle} cursor={{ stroke: '#334155', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                <Area type="monotone" dataKey="total" stroke="#00E5FF" strokeWidth={2} fill="url(#colorTotal)" name="Total Scans" />
-                <Area type="monotone" dataKey="threats" stroke="#F43F5E" strokeWidth={2} fill="url(#colorThreats)" name="Threats" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#23272D" vertical={false} />
+                <XAxis dataKey="day" stroke="#656B74" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
+                <YAxis stroke="#656B74" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={customTooltipStyle} cursor={{ stroke: '#2D323A', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                <Area type="monotone" dataKey="total" stroke={COLORS.total} strokeWidth={2} fill="url(#colorTotal)" name="Total Scans" />
+                <Area type="monotone" dataKey="threats" stroke={COLORS.threats} strokeWidth={2} fill="url(#colorThreats)" name="Threats" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants} className="glass-panel rounded-xl p-6">
-          <div className="mb-6">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider font-mono">
-              <ShieldAlert size={16} className="text-cyber-cyan" />
+        <div className="rounded-lg border border-cyber-border bg-cyber-dark p-5">
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <ShieldAlert size={16} className="text-cyber-muted" />
               Verdict Distribution
             </h3>
-            <p className="text-xs text-cyber-muted mt-1">Current state</p>
           </div>
 
-          <div className="h-[250px] w-full relative">
+          <div className="h-[220px] w-full relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={THREAT_DISTRIBUTION_DATA}
+                  data={threatDistribution}
                   cx="50%"
                   cy="50%"
-                  innerRadius={65}
-                  outerRadius={90}
-                  paddingAngle={3}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={2}
                   dataKey="value"
                   stroke="none"
                 >
-                  {THREAT_DISTRIBUTION_DATA.map((entry, index) => (
+                  {threatDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={customTooltipStyle} />
+                <Tooltip contentStyle={customTooltipStyle} itemStyle={{ fontSize: '11px' }} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-2xl font-bold text-white font-mono">{
-                THREAT_DISTRIBUTION_DATA.reduce((acc, curr) => acc + curr.value, 0)
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
+              <span className="text-xl font-medium text-white font-mono">{
+                threatDistribution.reduce((acc, curr) => acc + curr.value, 0)
               }</span>
-              <span className="text-[10px] text-cyber-muted font-mono uppercase tracking-wider">Total</span>
+              <span className="text-[10px] text-cyber-muted font-medium uppercase tracking-wider">Total</span>
             </div>
           </div>
-        </motion.div>
+          
+          <div className="mt-4 space-y-2">
+            {threatDistribution.map((item, idx) => (
+              <div key={idx} className="flex justify-between items-center text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
+                  <span className="text-cyber-muted">{item.name}</span>
+                </div>
+                <span className="text-white font-mono">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <motion.div variants={itemVariants} className="glass-panel rounded-xl p-6">
-        <div className="mb-6">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider font-mono">
-            <Target size={16} className="text-cyber-cyan" />
+      <div className="rounded-lg border border-cyber-border bg-cyber-dark p-5">
+        <div className="mb-4">
+          <h3 className="text-sm font-medium text-white flex items-center gap-2">
+            <Target size={16} className="text-cyber-muted" />
             Top Spoofed Brands
           </h3>
-          <p className="text-xs text-cyber-muted mt-1">Detected impersonation attempts</p>
         </div>
-        <div className="h-[250px] w-full">
+        <div className="h-[240px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={TARGETED_BRANDS_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
-              <XAxis dataKey="brand" stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-              <YAxis stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={customTooltipStyle} cursor={{ fill: '#ffffff', opacity: 0.05 }} />
-              <Bar dataKey="attacks" fill="#00E5FF" radius={[4, 4, 0, 0]} name="Detected Attacks" barSize={40}>
+            <BarChart data={TARGETED_BRANDS_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#23272D" horizontal={true} vertical={false} />
+              <XAxis type="number" stroke="#656B74" fontSize={10} fontFamily="JetBrains Mono" tickLine={false} axisLine={false} />
+              <YAxis dataKey="brand" type="category" stroke="#A0A5AE" fontSize={11} tickLine={false} axisLine={false} width={100} />
+              <Tooltip contentStyle={customTooltipStyle} cursor={{ fill: '#16191E' }} />
+              <Bar dataKey="attacks" fill={COLORS.total} radius={[0, 4, 4, 0]} name="Attacks" barSize={20}>
                 {TARGETED_BRANDS_DATA.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={index === 0 ? '#F43F5E' : index === 1 ? '#F59E0B' : '#00E5FF'} />
+                  <Cell key={`cell-${index}`} fill={index === 0 ? COLORS.threats : index === 1 ? COLORS.suspicious : COLORS.total} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

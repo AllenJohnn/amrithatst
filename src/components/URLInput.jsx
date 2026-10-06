@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { ScanSearch, Globe, ArrowRight, Loader2, X, TerminalSquare } from 'lucide-react';
+import { Loader2, ArrowRight, X } from 'lucide-react';
 import { SAMPLE_URLS } from '../data/dummyData';
 import { cn } from '../utils';
 
 const URLInput = ({ onScan, isScanning, defaultValue = "" }) => {
   const [url, setUrl] = useState(defaultValue);
-  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,83 +13,61 @@ const URLInput = ({ onScan, isScanning, defaultValue = "" }) => {
     }
   };
 
-  const handleSelectSample = (sampleUrl) => {
-    setUrl(sampleUrl);
-    onScan(sampleUrl);
-  };
-
   return (
-    <div className="w-full space-y-5">
-      <form onSubmit={handleSubmit} className="relative group">
-        {/* Glow effect on focus */}
-        <div className={cn(
-          "absolute -inset-0.5 rounded-xl blur-md transition-all duration-500",
-          isFocused ? "bg-cyber-cyan/30 opacity-100" : "bg-cyber-border opacity-0 group-hover:opacity-100"
-        )} />
-        
-        <div className="relative flex flex-col sm:flex-row bg-cyber-dark rounded-xl border border-cyber-border/80 p-1">
-          <div className="relative flex-1 flex items-center">
-            <div className="pl-4 text-cyber-cyan/70">
-              <TerminalSquare size={18} />
-            </div>
+    <div className="w-full space-y-4">
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
             <input
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="https://suspicious-target.xyz/login"
+              placeholder="https://example.com"
               disabled={isScanning}
-              className="w-full bg-transparent py-3 pl-3 pr-10 font-mono text-sm text-white placeholder-cyber-dim outline-none disabled:opacity-50"
+              className="w-full bg-cyber-card border border-cyber-border rounded-md py-2 pl-3 pr-8 font-mono text-sm text-white placeholder-cyber-dim outline-none focus:border-cyber-cyan transition-colors disabled:opacity-50"
             />
             {url && !isScanning && (
               <button
                 type="button"
                 onClick={() => setUrl("")}
-                className="absolute right-3 p-1 rounded-md text-cyber-muted hover:text-white hover:bg-white/10 transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-cyber-dim hover:text-white transition-colors rounded"
               >
                 <X size={14} />
               </button>
             )}
           </div>
-
           <button
             type="submit"
             disabled={!url.trim() || isScanning}
-            className="mt-1 sm:mt-0 flex items-center justify-center gap-2 rounded-lg bg-cyber-cyan px-6 py-3 font-bold text-black transition-all hover:bg-white hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-cyber-cyan disabled:hover:shadow-none shrink-0"
+            className="flex items-center justify-center gap-2 rounded-md bg-white text-black px-4 py-2 font-medium text-sm transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {isScanning ? (
               <>
-                <Loader2 size={16} className="animate-spin" />
-                <span>Executing...</span>
+                <Loader2 size={14} className="animate-spin" />
+                <span>Analyzing</span>
               </>
             ) : (
               <>
-                <span>Initiate Scan</span>
-                <ArrowRight size={16} />
+                <span>Analyze</span>
+                <ArrowRight size={14} />
               </>
             )}
           </button>
         </div>
       </form>
 
-      {/* Preset Demo Chips */}
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <span className="text-xs font-semibold uppercase tracking-wider text-cyber-dim">Quick Vectors:</span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs text-cyber-muted">Presets:</span>
         {SAMPLE_URLS.map((sample, idx) => (
           <button
             key={idx}
             type="button"
-            onClick={() => handleSelectSample(sample.url)}
+            onClick={() => {
+              setUrl(sample.url);
+              onScan(sample.url);
+            }}
             disabled={isScanning}
-            className={cn(
-              "rounded-md border px-3 py-1.5 text-[10px] uppercase font-mono tracking-wider transition-all duration-300 hover:-translate-y-0.5",
-              sample.type === 'phishing'
-                ? "border-cyber-danger/30 bg-cyber-danger/10 text-cyber-danger hover:border-cyber-danger hover:shadow-[0_0_10px_rgba(244,63,94,0.2)]"
-                : sample.type === 'suspicious'
-                ? "border-cyber-warning/30 bg-cyber-warning/10 text-cyber-warning hover:border-cyber-warning hover:shadow-[0_0_10px_rgba(245,158,11,0.2)]"
-                : "border-cyber-mint/30 bg-cyber-mint/10 text-cyber-mint hover:border-cyber-mint hover:shadow-[0_0_10px_rgba(16,185,129,0.2)]"
-            )}
+            className="text-xs text-cyber-dim hover:text-white transition-colors"
           >
             {sample.label}
           </button>

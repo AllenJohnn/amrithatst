@@ -6,8 +6,8 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
   const isSmall = size === 'small';
   
   const baseClasses = cn(
-    "inline-flex items-center gap-1.5 rounded-md border font-mono font-semibold tracking-wider uppercase backdrop-blur-sm",
-    isSmall ? "px-2 py-0.5 text-[10px]" : "px-3 py-1.5 text-xs",
+    "inline-flex items-center gap-1.5 rounded-sm border font-mono font-medium uppercase",
+    isSmall ? "px-1.5 py-0.5 text-[10px]" : "px-2 py-1 text-xs",
     className
   );
 
@@ -15,9 +15,9 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
     return (
       <span className={cn(
         baseClasses,
-        "border-cyber-mint/30 bg-cyber-mint/10 text-cyber-mint shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+        "border-cyber-mint/30 bg-cyber-mint/10 text-cyber-mint"
       )}>
-        <ShieldCheck size={isSmall ? 12 : 14} />
+        <ShieldCheck size={isSmall ? 10 : 12} />
         VERIFIED SAFE
       </span>
     );
@@ -27,10 +27,10 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
     return (
       <span className={cn(
         baseClasses,
-        "border-cyber-danger/40 bg-cyber-danger/10 text-cyber-danger shadow-[0_0_10px_rgba(244,63,94,0.2)]"
+        "border-cyber-danger/30 bg-cyber-danger/10 text-cyber-danger"
       )}>
-        <ShieldAlert size={isSmall ? 12 : 14} />
-        CRITICAL THREAT
+        <ShieldAlert size={isSmall ? 10 : 12} />
+        PHISHING
       </span>
     );
   }
@@ -38,9 +38,9 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
   return (
     <span className={cn(
       baseClasses,
-      "border-cyber-warning/40 bg-cyber-warning/10 text-cyber-warning shadow-[0_0_10px_rgba(245,158,11,0.15)]"
+      "border-cyber-warning/30 bg-cyber-warning/10 text-cyber-warning"
     )}>
-      <AlertTriangle size={isSmall ? 12 : 14} />
+      <AlertTriangle size={isSmall ? 10 : 12} />
       SUSPICIOUS
     </span>
   );

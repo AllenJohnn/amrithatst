@@ -12,53 +12,48 @@ export default {
       },
       colors: {
         cyber: {
-          black: "#02040A",   // Deeper than slate-950
-          dark: "#080C16",    // App shell background
-          card: "#0D1321",    // Surface level 1
-          cardHover: "#121A2D", // Surface hover
-          border: "#1E293B",  // Borders
-          borderHigh: "#334155", // Hover borders
+          // Charcoal / Graphite foundation
+          black: "#08090B",   // Background
+          dark: "#0D0F12",    // Primary surface
+          card: "#111418",    // Secondary surface
+          cardHover: "#16191E", // Elevated surface
           
-          // Accent colors
-          cyan: "#00E5FF",    // Primary interactive
-          blue: "#0070F3",    // Vercel blue
-          indigo: "#6366F1",  // Subtle highlights
-          violet: "#8B5CF6",  // AI/Machine Learning cues
+          // Borders
+          border: "#23272D",  
+          borderHigh: "#2D323A", 
+          borderSubtle: "#1B1E23",
           
-          // Semantic
-          mint: "#10B981",    // Safe / Green
-          muted: "#94A3B8",   // Secondary text
-          dim: "#475569",     // Disabled/Subtle text
-          danger: "#F43F5E",  // Threat/Red
-          warning: "#F59E0B", // Suspicious/Amber
+          // Semantic Colors (Muted, professional)
+          cyan: "#AEB99A",    // Primary accent (Muted sage) - keeping 'cyan' key to avoid massive refactoring but it's sage now
+          blue: "#8799B5",    // Info (Muted blue)
+          indigo: "#8799B5",  // Re-mapped to info
+          violet: "#A19EBA",  // Muted purple
+          
+          // Status
+          mint: "#7FA889",    // Success (Muted green)
+          danger: "#C87878",  // Threat (Muted red)
+          warning: "#C6A86A", // Suspicious (Muted amber)
+          
+          // Text
+          white: "#F1F2F4",   // Primary text
+          muted: "#A0A5AE",   // Secondary text
+          dim: "#656B74",     // Muted text
         },
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        'cyber-gradient': 'linear-gradient(135deg, #00E5FF 0%, #0070F3 100%)',
+      borderRadius: {
+        'sm': '4px',
+        DEFAULT: '6px',
+        'md': '6px',
+        'lg': '8px',
+        'xl': '10px',
+        '2xl': '12px',
+        '3xl': '16px',
+        'full': '9999px',
       },
       boxShadow: {
-        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-        'glow-sm': '0 0 15px -3px var(--tw-shadow-color)',
-        'glow-md': '0 0 25px -5px var(--tw-shadow-color)',
-        'glow-lg': '0 0 40px -10px var(--tw-shadow-color)',
+        'panel': '0 2px 8px -2px rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3)',
+        'modal': '0 8px 32px -4px rgba(0, 0, 0, 0.6), 0 4px 16px -2px rgba(0, 0, 0, 0.4)',
       },
-      animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'scanline': 'scanline 2s linear infinite',
-      },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        scanline: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100%)' },
-        }
-      }
     },
   },
   plugins: [],

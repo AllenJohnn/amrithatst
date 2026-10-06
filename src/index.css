@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -12,12 +12,8 @@
   }
 
   body {
-    background-color: #02040A;
-    background-image: 
-      radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
-    background-attachment: fixed;
-    color: #F8FAFC; /* slate-50 */
+    background-color: #08090B;
+    color: #F1F2F4;
     font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -35,45 +31,25 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1E293B;
-    border-radius: 9999px;
+    background: #23272D;
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+    background: #2D323A;
   }
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply bg-cyber-card/80 backdrop-blur-xl border border-cyber-border;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  .panel {
+    @apply bg-cyber-dark border border-cyber-border rounded-lg shadow-panel;
   }
   
-  .glass-panel-hover {
-    @apply transition-all duration-300;
-  }
-  
-  .glass-panel-hover:hover {
-    background-color: rgba(18, 26, 45, 0.9);
-    border-color: #334155;
+  .panel-nested {
+    @apply bg-cyber-card border border-cyber-borderSubtle rounded-md;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400;
-  }
-
-  .gradient-cyan-blue {
-    @apply bg-gradient-to-r from-cyber-cyan to-cyber-blue;
-  }
-  
   .text-shadow-sm {
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   }
-}
-
-/* Subtle dot background for that command center feel */
-.bg-grid-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
 }
