@@ -51,7 +51,12 @@
   }
   
   .glass-panel-hover {
-    @apply hover:bg-cyber-cardHover/90 hover:border-cyber-borderHigh transition-all duration-300;
+    @apply transition-all duration-300;
+  }
+  
+  .glass-panel-hover:hover {
+    background-color: rgba(18, 26, 45, 0.9);
+    border-color: #334155;
   }
 
   .gradient-text {
