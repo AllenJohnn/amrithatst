@@ -42,7 +42,7 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="bg-cyber-dark border border-cyber-border rounded-xl p-6 shadow-panel">
+        <div className="bg-cyber-dark border border-cyber-border rounded-xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-cyber-muted block">

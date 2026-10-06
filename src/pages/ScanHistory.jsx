@@ -185,7 +185,7 @@ const ScanHistory = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute top-0 right-0 h-full w-[400px] border-l border-cyber-border bg-cyber-dark shadow-panel z-20 flex flex-col"
+            className="absolute top-0 right-0 h-full w-[400px] border-l border-cyber-border bg-cyber-dark z-20 flex flex-col"
           >
             <div className="flex items-center justify-between border-b border-cyber-border p-4">
               <h3 className="text-sm font-medium text-white">Scan Details</h3>

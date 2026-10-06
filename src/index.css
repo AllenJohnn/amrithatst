@@ -42,7 +42,7 @@
 
 @layer utilities {
   .panel {
-    @apply bg-cyber-dark border border-cyber-border rounded-lg shadow-panel;
+    @apply bg-cyber-dark border border-cyber-border rounded-lg;
   }
   
   .panel-nested {
