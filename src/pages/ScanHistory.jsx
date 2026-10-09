@@ -154,7 +154,7 @@ export default function ScanHistory() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "phishgaurds_audit_log.csv");
+    link.setAttribute("download", "phishguards_audit_log.csv");
     document.body.appendChild(link);
     link.click();
     link.remove();

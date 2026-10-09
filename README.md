@@ -1,4 +1,4 @@
-# PhishGuard AI - Web Application
+# PhishGuards - Web Application
 
 A React-based cybersecurity dashboard and URL scanning interface powered by Vite and Tailwind CSS.
 

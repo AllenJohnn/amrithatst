@@ -18,7 +18,7 @@ const Login = () => {
   };
 
   const handleDemoLogin = () => {
-    setUsername('analyst@phishgaurds.sec');
+    setUsername('analyst@phishguards.sec');
     setPassword('••••••••••••');
     setIsLoading(true);
     setTimeout(() => {
@@ -37,7 +37,7 @@ const Login = () => {
             <Shield className="h-6 w-6 text-cyber-white" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-xl font-medium tracking-tight">PhishGaurds</h1>
+            <h1 className="text-xl font-medium tracking-tight">PhishGuards</h1>
             <p className="text-sm text-cyber-muted mt-1">Sign in to your security console</p>
           </div>
         </div>

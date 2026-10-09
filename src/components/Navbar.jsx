@@ -70,7 +70,7 @@ export default function Navbar() {
         </button>
 
         <div className="flex items-center gap-2 text-cyber-textMuted hover:text-cyber-white transition-colors cursor-pointer ml-2">
-          <span className="text-xs hidden sm:block font-medium">analyst@phishgaurds.sec</span>
+          <span className="text-xs hidden sm:block font-medium">analyst@phishguards.sec</span>
           <div className="flex h-7 w-7 items-center justify-center rounded bg-cyber-dark border border-cyber-border">
             <User size={14} />
           </div>
@@ -91,7 +91,7 @@ export default function Navbar() {
                 <div className="bg-cyber-card rounded-[4px] p-1 border border-cyber-border">
                   <Shield className="h-4 w-4 text-sage-400" />
                 </div>
-                <h1 className="text-sm font-semibold tracking-tight text-cyber-white">PhishGaurds</h1>
+                <h1 className="text-sm font-semibold tracking-tight text-cyber-white">PhishGuards</h1>
               </div>
               <button onClick={() => setMobileMenuOpen(false)} className="text-cyber-textMuted hover:text-cyber-white">
                 <X size={20} />

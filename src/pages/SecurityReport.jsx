@@ -61,7 +61,7 @@ export default function SecurityReport() {
             <p className="text-sm text-gray-500 font-mono">ID: {scan.id}</p>
           </div>
           <div className="text-right">
-            <p className="font-semibold text-sm">PhishGaurds AI</p>
+            <p className="font-semibold text-sm">PhishGuards</p>
             <p className="text-xs text-gray-500">{new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function SecurityReport() {
 
         {/* Footer */}
         <div className="mt-16 pt-4 border-t border-gray-200 text-xs text-center text-gray-400">
-          Generated automatically by PhishGaurds AI Security Intelligence Engine. Confidential.
+          Generated automatically by PhishGuards Security Intelligence Engine. Confidential.
         </div>
       </div>
     </div>
