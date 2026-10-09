@@ -5,10 +5,10 @@ function Badge({ className, variant = "default", ...props }) {
   const variants = {
     default: "border-transparent bg-cyber-card text-cyber-text hover:bg-cyber-cardHover",
     secondary: "border-transparent bg-cyber-dark text-cyber-text hover:bg-cyber-card",
-    destructive: "border-transparent bg-red-900/30 text-red-400 hover:bg-red-900/50",
+    destructive: "border-transparent bg-cyber-danger/10 text-cyber-danger hover:bg-cyber-danger/15",
     outline: "text-cyber-text border-cyber-border",
-    success: "border-transparent bg-green-900/30 text-green-400 hover:bg-green-900/50",
-    warning: "border-transparent bg-amber-900/30 text-amber-400 hover:bg-amber-900/50",
+    success: "border-transparent bg-cyber-success/10 text-cyber-success hover:bg-cyber-success/15",
+    warning: "border-transparent bg-cyber-warning/10 text-cyber-warning hover:bg-cyber-warning/15",
   }
 
   return (

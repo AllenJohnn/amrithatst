@@ -9,55 +9,20 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isDarkMode, setIsDarkMode] = React.useState(true);
 
-  const applyThemeVars = (isDark) => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-      root.style.setProperty('--color-bg', '#090909');
-      root.style.setProperty('--color-surface-1', '#0F0F0F');
-      root.style.setProperty('--color-surface-2', '#141414');
-      root.style.setProperty('--color-surface-3', '#191919');
-      root.style.setProperty('--color-surface-4', '#1E1E1E');
-      root.style.setProperty('--color-border', '#1F1F1F');
-      root.style.setProperty('--color-border-subtle', '#202020');
-      root.style.setProperty('--color-text-primary', '#F2F2F2');
-      root.style.setProperty('--color-text-muted', '#888888');
-      root.style.setProperty('--color-text-dim', '#666666');
-      root.style.setProperty('--color-text-very-dim', '#444444');
-      root.style.setProperty('--color-safe', '74 222 128');
-      root.style.setProperty('--color-warning', '251 191 36');
-      root.style.setProperty('--color-danger', '248 113 113');
-      root.style.setProperty('--color-accent', '167 182 162');
-    } else {
-      root.classList.remove('dark');
-      root.style.setProperty('--color-bg', '#FDFCF9');
-      root.style.setProperty('--color-surface-1', '#FFFFFF');
-      root.style.setProperty('--color-surface-2', '#F4F2EC');
-      root.style.setProperty('--color-surface-3', '#EBE8E0');
-      root.style.setProperty('--color-surface-4', '#E0DDD4');
-      root.style.setProperty('--color-border', '#D1CFC7');
-      root.style.setProperty('--color-border-subtle', '#E0DDD4');
-      root.style.setProperty('--color-text-primary', '#1C1B19');
-      root.style.setProperty('--color-text-muted', '#4F4E4A');
-      root.style.setProperty('--color-text-dim', '#73726E');
-      root.style.setProperty('--color-text-very-dim', '#999893');
-      root.style.setProperty('--color-safe', '4 120 87');
-      root.style.setProperty('--color-warning', '180 83 9');
-      root.style.setProperty('--color-danger', '185 28 28');
-      root.style.setProperty('--color-accent', '79 98 74');
-    }
+  const applyTheme = (isDark) => {
+    document.documentElement.classList.toggle('dark', isDark);
   };
 
   React.useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark');
     setIsDarkMode(isDark);
-    applyThemeVars(isDark);
+    applyTheme(isDark);
   }, []);
 
   const toggleTheme = () => {
     const nextDark = !isDarkMode;
     setIsDarkMode(nextDark);
-    applyThemeVars(nextDark);
+    applyTheme(nextDark);
   };
 
   const getPageTitle = () => {
@@ -93,7 +58,7 @@ export default function Navbar() {
         <div className="hidden sm:flex items-center gap-3 text-cyber-textMuted mr-2">
           <span className="text-xs">Model: <span className="font-mono text-cyber-white">v2.4</span></span>
           <span className="w-px h-3 bg-cyber-border" />
-          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-green-900/20 text-green-400 font-medium">System Optimal</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-cyber-success/10 text-cyber-success font-medium">System Optimal</span>
         </div>
 
         <button 
@@ -156,7 +121,7 @@ export default function Navbar() {
               })}
               
               <div className="pt-6 mt-6 border-t border-cyber-border px-2">
-                <NavLink to="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 text-red-400 text-base font-medium">
+                <NavLink to="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 text-cyber-danger text-base font-medium">
                   <LogOut size={18} />
                   <span>Log out</span>
                 </NavLink>

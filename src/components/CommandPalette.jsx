@@ -63,7 +63,7 @@ export default function CommandPalette() {
                 onSelect={() => runCommand(() => navigate('/scanner'))}
                 className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-2 text-sm outline-none aria-selected:bg-cyber-cardHover aria-selected:text-cyber-white"
               >
-                <ShieldAlert className="mr-2 h-4 w-4 text-amber-500" />
+                <ShieldAlert className="mr-2 h-4 w-4 text-cyber-warning" />
                 New Scan
               </Command.Item>
               <Command.Item

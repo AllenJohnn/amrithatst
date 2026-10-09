@@ -6,8 +6,8 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
   const Comp = asChild ? Slot : "button"
   
   const variants = {
-    default: "bg-sage-600 text-[#090909] hover:bg-sage-500",
-    destructive: "bg-red-900/50 text-red-400 hover:bg-red-900/70 border border-red-900",
+    default: "bg-cyber-accent text-cyber-black hover:brightness-95",
+    destructive: "bg-cyber-danger/10 text-cyber-danger hover:bg-cyber-danger/15 border border-cyber-danger/25",
     outline: "border border-cyber-border bg-transparent hover:bg-cyber-cardHover text-cyber-text",
     secondary: "bg-cyber-card text-cyber-text hover:bg-cyber-cardHover border border-cyber-border",
     ghost: "hover:bg-cyber-cardHover text-cyber-text hover:text-cyber-white",

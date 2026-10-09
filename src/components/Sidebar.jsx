@@ -87,8 +87,8 @@ export default function Sidebar() {
           <div className="flex items-center justify-between border border-cyber-border bg-cyber-cardHover rounded-md px-2 py-1.5">
             <div className="flex items-center gap-2">
               <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyber-success opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyber-success"></span>
               </div>
               <span className="text-xs font-mono text-cyber-white">US-East (Active)</span>
             </div>
@@ -96,7 +96,7 @@ export default function Sidebar() {
         </div>
         <NavLink
           to="/login"
-          className="flex w-full mt-2 items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-cyber-textMuted transition-colors hover:bg-red-900/10 hover:text-red-400"
+          className="flex w-full mt-2 items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-cyber-textMuted transition-colors hover:bg-cyber-danger/10 hover:text-cyber-danger"
         >
           <LogOut size={16} />
           <span>Log out</span>

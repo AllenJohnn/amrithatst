@@ -190,7 +190,7 @@ export default function ScanHistory() {
                 Compare Scans
               </Button>
             )}
-            <Button variant="outline" onClick={() => clearHistory()} className="text-xs text-cyber-danger hover:text-[#f87171] hover:bg-red-950/20 border-red-900/30">
+            <Button variant="outline" onClick={() => clearHistory()} className="text-xs text-cyber-danger hover:text-cyber-danger hover:bg-cyber-danger/10 border-cyber-danger/30">
               <Trash2 className="mr-2 h-3.5 w-3.5" />
               Clear Log
             </Button>
@@ -350,7 +350,7 @@ export default function ScanHistory() {
                       setSelectedScan(null);
                       toast.success("Log record deleted");
                     }}
-                    className="h-8 w-8 text-cyber-textMuted hover:text-cyber-danger hover:bg-red-950/20"
+                    className="h-8 w-8 text-cyber-textMuted hover:text-cyber-danger hover:bg-cyber-danger/10"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

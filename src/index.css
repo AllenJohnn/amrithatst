@@ -6,25 +6,27 @@
 
 @layer base {
   :root {
-    /* Warm Beige Light Mode */
-    --color-bg: #FDFCF9;
-    --color-surface-1: #FFFFFF;
-    --color-surface-2: #F4F2EC;
-    --color-surface-3: #EBE8E0;
-    --color-surface-4: #E0DDD4;
+    /* Soft sage neutrals keep the canvas calm while separating surfaces. */
+    --color-bg: #F4F6F3;
+    --color-surface-1: #FCFDFC;
+    --color-surface-2: #F0F3EF;
+    --color-surface-3: #E7ECE6;
+    --color-surface-4: #DDE5DC;
     
-    --color-border: #D1CFC7;
-    --color-border-subtle: #E0DDD4;
+    --color-border: #D1DAD0;
+    --color-border-subtle: #E0E7DF;
     
-    --color-text-primary: #1C1B19;
-    --color-text-muted: #4F4E4A;
-    --color-text-dim: #73726E;
-    --color-text-very-dim: #999893;
+    --color-text-primary: #18211A;
+    --color-text-muted: #46534A;
+    --color-text-dim: #5D6A61;
+    --color-text-very-dim: #748077;
     
     --color-accent: 79 98 74; /* sage-600 */
     --color-safe: 4 120 87; /* emerald-700 */
     --color-warning: 180 83 9; /* amber-700 */
     --color-danger: 185 28 28; /* red-700 */
+    --color-scrollbar-thumb: #C7D1C6;
+    --color-scrollbar-thumb-hover: #AAB8A9;
   }
 
   :root.dark {
@@ -47,6 +49,8 @@
     --color-safe: 74 222 128;
     --color-warning: 251 191 36;
     --color-danger: 248 113 113;
+    --color-scrollbar-thumb: #303030;
+    --color-scrollbar-thumb-hover: #484848;
   }
 
   * {
@@ -75,12 +79,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1F1F1F;
+    background: var(--color-scrollbar-thumb);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #333333;
+    background: var(--color-scrollbar-thumb-hover);
   }
 }
 
@@ -108,7 +112,7 @@
   .text-cyber-dim { color: var(--color-text-dim) !important; }
   .text-cyber-veryDim { color: var(--color-text-very-dim) !important; }
   
-  .text-cyber-accent { color: var(--color-accent) !important; }
-  .bg-cyber-accent { background-color: var(--color-accent) !important; }
-  .border-cyber-accent { border-color: var(--color-accent) !important; }
+  .text-cyber-accent { color: rgb(var(--color-accent)) !important; }
+  .bg-cyber-accent { background-color: rgb(var(--color-accent)) !important; }
+  .border-cyber-accent { border-color: rgb(var(--color-accent)) !important; }
 }

@@ -93,8 +93,8 @@ export default function Dashboard() {
             <CardContent className="p-5 flex flex-col justify-between h-full">
               <span className="text-[10px] text-cyber-textMuted font-semibold uppercase tracking-widest block mb-2">Threats Detected</span>
               <div className="flex items-center justify-between">
-                <span className="text-3xl font-semibold text-red-400 font-mono tracking-tight">{stats.phishingCount}</span>
-                <TinySparkline dataKey="threats" color="#f87171" />
+                <span className="text-3xl font-semibold text-cyber-danger font-mono tracking-tight">{stats.phishingCount}</span>
+                <TinySparkline dataKey="threats" color="rgb(var(--color-danger))" />
               </div>
             </CardContent>
           </Card>
@@ -103,7 +103,7 @@ export default function Dashboard() {
               <span className="text-[10px] text-cyber-textMuted font-semibold uppercase tracking-widest block mb-2">Safe URLs</span>
               <div className="flex items-center justify-between">
                 <span className="text-3xl font-semibold text-cyber-white font-mono tracking-tight">{stats.safeCount}</span>
-                <TinySparkline dataKey="safe" color="#4ade80" />
+                <TinySparkline dataKey="safe" color="rgb(var(--color-safe))" />
               </div>
             </CardContent>
           </Card>
@@ -112,7 +112,7 @@ export default function Dashboard() {
               <span className="text-[10px] text-cyber-textMuted font-semibold uppercase tracking-widest block mb-2">Model Confidence</span>
               <div className="flex items-center justify-between">
                 <span className="text-3xl font-semibold text-cyber-white font-mono tracking-tight">{stats.detectionRate}</span>
-                <span className="text-[10px] text-green-400 bg-green-900/20 px-2 py-0.5 rounded-sm font-medium">Stable</span>
+                <span className="text-[10px] text-cyber-success bg-cyber-success/10 px-2 py-0.5 rounded-sm font-medium">Stable</span>
               </div>
             </CardContent>
           </Card>
@@ -164,7 +164,7 @@ export default function Dashboard() {
                             </td>
                             <td className="px-5 py-3 text-right">
                               <span className={`font-mono text-sm font-medium ${
-                                scan.riskScore > 70 ? 'text-red-400' : scan.riskScore > 35 ? 'text-amber-400' : 'text-green-400'
+                                scan.riskScore > 70 ? 'text-cyber-danger' : scan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-success'
                               }`}>
                                 {scan.riskScore}
                               </span>
@@ -196,11 +196,11 @@ export default function Dashboard() {
                 <div className="flex flex-col gap-3 text-sm">
                   <div className="flex justify-between items-center py-2 border-b border-cyber-border/50">
                     <span className="text-cyber-textMuted">Threat Level</span>
-                    <span className="text-amber-400 font-medium">Moderate</span>
+                    <span className="text-cyber-warning font-medium">Moderate</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-cyber-border/50">
                     <span className="text-cyber-textMuted">Analysis Engine</span>
-                    <span className="text-green-400 font-medium">Operational</span>
+                    <span className="text-cyber-success font-medium">Operational</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-cyber-border/50">
                     <span className="text-cyber-textMuted">Avg Latency</span>
@@ -208,7 +208,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex justify-between items-center py-2">
                     <span className="text-cyber-textMuted">High-Risk Payloads</span>
-                    <span className="text-red-400 font-mono text-xs">{stats.phishingCount}</span>
+                    <span className="text-cyber-danger font-mono text-xs">{stats.phishingCount}</span>
                   </div>
                 </div>
               </CardContent>
@@ -222,20 +222,20 @@ export default function Dashboard() {
                 <div className="flex flex-col gap-5">
                   <div className="cursor-pointer group">
                     <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-cyber-white group-hover:text-red-400 transition-colors">Brand Spoofing</span>
+                      <span className="text-cyber-white group-hover:text-cyber-danger transition-colors">Brand Spoofing</span>
                       <span className="text-cyber-textMuted font-mono group-hover:text-cyber-white transition-colors">64%</span>
                     </div>
                     <div className="h-1.5 w-full bg-cyber-cardHover rounded-full overflow-hidden">
-                      <div className="h-full bg-red-400 rounded-full" style={{ width: '64%' }}></div>
+                      <div className="h-full bg-cyber-danger rounded-full" style={{ width: '64%' }}></div>
                     </div>
                   </div>
                   <div className="cursor-pointer group">
                     <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-cyber-white group-hover:text-amber-400 transition-colors">Raw IP Hosts</span>
+                      <span className="text-cyber-white group-hover:text-cyber-warning transition-colors">Raw IP Hosts</span>
                       <span className="text-cyber-textMuted font-mono group-hover:text-cyber-white transition-colors">22%</span>
                     </div>
                     <div className="h-1.5 w-full bg-cyber-cardHover rounded-full overflow-hidden">
-                      <div className="h-full bg-amber-400 rounded-full" style={{ width: '22%' }}></div>
+                      <div className="h-full bg-cyber-warning rounded-full" style={{ width: '22%' }}></div>
                     </div>
                   </div>
                   <div className="cursor-pointer group">
@@ -270,9 +270,9 @@ export default function Dashboard() {
                         onClick={() => navigate('/history?search=' + scan.domain)}
                       >
                         <div className="mt-0.5 shrink-0">
-                          {scan.status === 'phishing' ? <ShieldAlert className="h-4 w-4 text-red-400 group-hover:scale-110 transition-transform" /> : 
-                           scan.status === 'suspicious' ? <AlertTriangle className="h-4 w-4 text-amber-400 group-hover:scale-110 transition-transform" /> : 
-                           <ShieldCheck className="h-4 w-4 text-green-400 group-hover:scale-110 transition-transform" />}
+                          {scan.status === 'phishing' ? <ShieldAlert className="h-4 w-4 text-cyber-danger group-hover:scale-110 transition-transform" /> :
+                           scan.status === 'suspicious' ? <AlertTriangle className="h-4 w-4 text-cyber-warning group-hover:scale-110 transition-transform" /> :
+                           <ShieldCheck className="h-4 w-4 text-cyber-success group-hover:scale-110 transition-transform" />}
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
                           <div className="flex justify-between items-center mb-0.5">

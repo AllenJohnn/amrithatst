@@ -126,7 +126,7 @@ export default function URLScanner() {
               </div>
               <input
                 type="text"
-                className="block w-full pl-12 pr-12 py-4 bg-cyber-card border-2 border-[#222] rounded-lg text-cyber-white font-mono text-sm placeholder:text-[#555] placeholder:font-sans focus:ring-0 focus:border-[#444] transition-all outline-none"
+                className="block w-full pl-12 pr-12 py-4 bg-cyber-card border-2 border-cyber-border rounded-lg text-cyber-white font-mono text-sm placeholder:text-cyber-textMuted placeholder:font-sans focus:ring-0 focus:border-sage-500 transition-all outline-none"
                 placeholder="Enter URL to scan (e.g., https://paypal-login-update.com)"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -298,11 +298,11 @@ export default function URLScanner() {
                         <div className="space-y-2">
                           <div className="flex justify-between items-center bg-cyber-card p-2.5 rounded border border-cyber-border">
                             <span className="text-xs text-cyber-textMuted">URL Length</span>
-                            <span className={cn("text-xs font-mono font-medium", activeScan.features.urlLength > 65 ? "text-amber-400" : "text-cyber-white")}>{activeScan.features.urlLength} chars</span>
+                            <span className={cn("text-xs font-mono font-medium", activeScan.features.urlLength > 65 ? "text-cyber-warning" : "text-cyber-white")}>{activeScan.features.urlLength} chars</span>
                           </div>
                           <div className="flex justify-between items-center bg-cyber-card p-2.5 rounded border border-cyber-border">
                             <span className="text-xs text-cyber-textMuted">Subdomains</span>
-                            <span className={cn("text-xs font-mono font-medium", activeScan.features.subdomainsCount > 2 ? "text-amber-400" : "text-cyber-white")}>{activeScan.features.subdomainsCount}</span>
+                            <span className={cn("text-xs font-mono font-medium", activeScan.features.subdomainsCount > 2 ? "text-cyber-warning" : "text-cyber-white")}>{activeScan.features.subdomainsCount}</span>
                           </div>
                           <div className="flex justify-between items-center bg-cyber-card p-2.5 rounded border border-cyber-border">
                             <span className="text-xs text-cyber-textMuted">Suspicious Tokens</span>
