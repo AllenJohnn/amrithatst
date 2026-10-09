@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -25,27 +26,27 @@ export default {
           950: '#161c16',
         },
         cyber: {
-          black: "#090909",       // Background
-          dark: "#0F0F0F",        // Primary surface
-          card: "#141414",        // Secondary surface
-          cardHover: "#191919",   // Elevated surface
-          cardActive: "#1E1E1E",  // Hover surface
+          black: "var(--color-bg)",       // Background
+          dark: "var(--color-surface-1)",        // Primary surface
+          card: "var(--color-surface-2)",        // Secondary surface
+          cardHover: "var(--color-surface-3)",   // Elevated surface
+          cardActive: "var(--color-surface-4)",  // Hover surface
           
-          border: "#1F1F1F",      // Primary border
-          borderSubtle: "#202020",// Subtle border
+          border: "var(--color-border)",      // Primary border
+          borderSubtle: "var(--color-border-subtle)",// Subtle border
           
-          accent: "#a7b6a2",      // Primary accent
+          accent: "rgb(var(--color-accent) / <alpha-value>)",      // Primary accent
           
-          success: "#4ade80",     // Semantic: Safe / Success
-          warning: "#fbbf24",     // Semantic: Warning / Suspicious
-          danger: "#f87171",      // Semantic: Danger / Phishing
-          info: "#9ca3af",        // Semantic: Info
+          success: "rgb(var(--color-safe) / <alpha-value>)",     // Semantic: Safe / Success
+          warning: "rgb(var(--color-warning) / <alpha-value>)",     // Semantic: Warning / Suspicious
+          danger: "rgb(var(--color-danger) / <alpha-value>)",      // Semantic: Danger / Phishing
+          info: "var(--color-text-dim)",        // Semantic: Info
           
-          white: "#F2F2F2",       // Primary text
-          textMuted: "#888888",   // Secondary text alias
-          muted: "#888888",       // Secondary text
-          dim: "#666666",         // Muted text
-          veryDim: "#444444",     // Very muted
+          white: "var(--color-text-primary)",       // Primary text
+          textMuted: "var(--color-text-muted)",   // Secondary text alias
+          muted: "var(--color-text-muted)",       // Secondary text
+          dim: "var(--color-text-dim)",         // Muted text
+          veryDim: "var(--color-text-very-dim)",     // Very muted
         },
       },
       borderRadius: {

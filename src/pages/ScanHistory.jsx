@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   flexRender,
@@ -9,7 +9,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  History,
   Search,
   Download,
   Trash2,
@@ -21,323 +20,327 @@ import {
   ShieldCheck,
   ShieldAlert,
   AlertTriangle,
+  ExternalLink,
+  FileText,
+  History,
+  CheckCircle2,
+  Lock,
+  Unlock,
+  SplitSquareHorizontal
 } from 'lucide-react';
 import { useScan } from '../context/ScanContext';
-import { cn } from '../utils';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';
+import { cn } from '../utils';
 import PageTransition from '../components/PageTransition';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function ScanHistory() {
   const { scans, clearHistory, deleteScan } = useScan();
   const [globalFilter, setGlobalFilter] = useState('');
   const [selectedScan, setSelectedScan] = useState(null);
-  const [sorting, setSorting] = useState([]);
-  const [filterStatus, setFilterStatus] = useState('all');
+  
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareSelection, setCompareSelection] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const filteredScans = useMemo(() => {
-    if (filterStatus === 'all') return scans;
-    return scans.filter(s => s.status === filterStatus);
-  }, [scans, filterStatus]);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get('search');
+    const filter = params.get('filter');
+    const compare = params.get('compare');
+    if (q) setGlobalFilter(q);
+    if (filter) setGlobalFilter(filter);
+    if (compare === 'true') setCompareMode(true);
+  }, [location.search]);
 
-  const columns = useMemo(
-    () => [
+  const toggleCompare = (scan) => {
+    setCompareSelection(prev => {
+      const isSelected = prev.find(s => s.id === scan.id);
+      if (isSelected) return prev.filter(s => s.id !== scan.id);
+      if (prev.length >= 2) {
+        toast("You can only compare 2 scans at a time.");
+        return prev;
+      }
+      return [...prev, scan];
+    });
+  };
+
+  const columns = useMemo(() => {
+    const baseCols = [
       {
         accessorKey: 'url',
         header: 'Target Payload',
-        cell: ({ row }) => {
-          return (
-            <div className="flex flex-col max-w-[200px] md:max-w-[300px]">
-              <span className="font-mono text-sm text-white truncate group-hover:text-sage-400 transition-colors">
-                {row.original.url}
-              </span>
-              <span className="text-xs text-cyber-textMuted truncate">
-                {row.original.domain}
-              </span>
-            </div>
-          );
-        },
+        cell: info => (
+          <div className="flex flex-col">
+            <span className="font-mono text-cyber-white text-[13px] truncate max-w-[280px] md:max-w-[400px] hover:text-sage-400 transition-colors cursor-pointer" onClick={() => navigate('/scanner?url=' + encodeURIComponent(info.getValue()))}>{info.getValue()}</span>
+            <span className="text-[11px] text-cyber-textMuted mt-0.5">{info.row.original.domain}</span>
+          </div>
+        )
       },
       {
         accessorKey: 'status',
         header: 'Classification',
-        cell: ({ row }) => {
-          const status = row.original.status;
-          let variant = 'success';
-          if (status === 'phishing') variant = 'destructive';
-          if (status === 'suspicious') variant = 'warning';
-          
+        cell: info => {
+          const status = info.getValue();
           return (
-            <Badge variant={variant} className="uppercase tracking-widest text-[10px] px-2 py-0.5">
+            <Badge 
+              variant={status === 'phishing' ? 'destructive' : status === 'suspicious' ? 'warning' : 'success'}
+              className="px-2 py-0.5 uppercase tracking-widest text-[9px]"
+            >
               {status}
             </Badge>
           );
-        },
+        }
       },
       {
         accessorKey: 'riskScore',
-        header: ({ column }) => {
+        header: () => <div className="text-right">Risk Score</div>,
+        cell: info => {
+          const val = info.getValue();
           return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-              className="p-0 hover:bg-transparent h-auto"
-            >
-              Risk
-              <ArrowUpDown className="ml-2 h-3 w-3" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => {
-          const score = row.original.riskScore;
-          let color = 'text-green-400';
-          if (score > 70) color = 'text-red-400';
-          else if (score > 35) color = 'text-amber-400';
-          return (
-            <span className={cn("font-mono text-sm font-medium", color)}>
-              {score}
-            </span>
-          );
-        },
-      },
-      {
-        accessorKey: 'confidence',
-        header: 'Confidence',
-        cell: ({ row }) => (
-          <span className="font-mono text-sm text-cyber-textMuted">
-            {row.original.confidence}%
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'timestamp',
-        header: ({ column }) => {
-          return (
-            <div className="text-right">
-              <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="p-0 hover:bg-transparent h-auto"
-              >
-                Timestamp
-                <ArrowUpDown className="ml-2 h-3 w-3" />
-              </Button>
+            <div className={`text-right font-mono text-sm font-medium ${val > 70 ? 'text-cyber-danger' : val > 35 ? 'text-cyber-warning' : 'text-cyber-success'}`}>
+              {val}
             </div>
+          );
+        }
+      },
+      {
+        accessorKey: 'date',
+        header: () => <div className="text-right">Timestamp</div>,
+        cell: info => <div className="text-right text-cyber-textMuted text-xs font-mono">{info.getValue()}</div>
+      }
+    ];
+
+    if (compareMode) {
+      return [
+        {
+          id: 'select',
+          header: 'Compare',
+          cell: info => (
+            <input 
+              type="checkbox"
+              className="w-4 h-4 rounded border-cyber-border bg-cyber-cardHover text-sage-500 focus:ring-sage-500/20"
+              checked={compareSelection.some(s => s.id === info.row.original.id)}
+              onChange={() => toggleCompare(info.row.original)}
+            />
           )
         },
-        cell: ({ row }) => (
-          <div className="text-right text-xs text-cyber-textMuted whitespace-nowrap">
-            {row.original.timestamp}
-          </div>
-        ),
-      },
-    ],
-    []
-  );
+        ...baseCols
+      ];
+    }
+    return baseCols;
+  }, [compareMode, compareSelection, navigate]);
 
   const table = useReactTable({
-    data: filteredScans,
+    data: scans,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      globalFilter,
-    },
-    onSortingChange: setSorting,
+    state: { globalFilter },
     onGlobalFilterChange: setGlobalFilter,
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      }
-    }
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 12 } }
   });
 
-  const handleExportCSV = () => {
-    if (scans.length === 0) return;
-    const headers = ["ID", "URL", "Domain", "Status", "RiskScore", "Confidence", "Date"];
-    const rows = scans.map(s => [
-      s.id,
-      `"${s.url.replace(/"/g, '""')}"`,
-      `"${s.domain}"`,
-      s.status,
-      s.riskScore,
-      s.confidence,
-      `"${s.date}"`
-    ]);
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+  const exportCSV = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "Date,URL,Domain,Status,Risk Score,Confidence\n"
+      + scans.map(row => `${row.date},${row.url},${row.domain},${row.status},${row.riskScore},${row.confidence}`).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `phishgaurds_audit_log_${Date.now()}.csv`);
+    link.setAttribute("download", "phishgaurds_audit_log.csv");
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
   };
 
   return (
     <PageTransition>
-      <div className="flex h-full w-full relative overflow-hidden max-w-7xl mx-auto">
-        <div className={cn("flex-1 flex flex-col space-y-6 transition-all duration-300", selectedScan ? "pr-[400px]" : "pr-0")}>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-white mb-1">
-                Audit Log
-              </h1>
-              <p className="text-sm text-cyber-textMuted">
-                Chronological registry of analyzed web payloads.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportCSV}
-                disabled={scans.length === 0}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Export CSV
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={clearHistory}
-                disabled={scans.length === 0}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Clear Log
-              </Button>
-            </div>
+      <div className="flex-1 p-6 sm:p-8 flex flex-col relative h-[calc(100vh-140px)] max-w-[1600px] mx-auto">
+        
+        {/* Top Header & Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-semibold text-cyber-white tracking-tight flex items-center gap-3">
+              <History className="text-cyber-textMuted" size={28} />
+              Investigation Log
+            </h1>
+            <p className="text-sm text-cyber-textMuted mt-2 max-w-xl">
+              {compareMode ? 'Select two operational records to perform a differential signature analysis.' : 'Comprehensive audit trail of all payload scanning operations.'}
+            </p>
           </div>
-
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#0F0F0F] p-4 rounded-lg border border-cyber-border">
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyber-textMuted" />
-              <Input
-                placeholder="Filter domains or URLs..."
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-9 bg-[#1A1A1A] border-transparent focus-visible:border-sage-500"
-              />
-            </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {['all', 'phishing', 'suspicious', 'safe'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilterStatus(status)}
-                  className={cn(
-                    "rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-wider transition-colors border",
-                    filterStatus === status
-                      ? "bg-white text-[#090909] border-white"
-                      : "bg-[#1A1A1A] text-cyber-textMuted border-cyber-border hover:bg-[#2A2A2A] hover:text-white"
-                  )}
-                >
-                  {status}
-                </button>
-              ))}
-            </div>
+          <div className="flex items-center gap-3">
+            {compareMode && (
+              <Button variant="ghost" onClick={() => {
+                setCompareMode(false);
+                setCompareSelection([]);
+              }} className="text-xs bg-cyber-cardHover hover:bg-cyber-cardActive border border-cyber-border">
+                <X className="mr-2 h-3.5 w-3.5"/> Cancel Comparison
+              </Button>
+            )}
+            {!compareMode && scans.length >= 2 && (
+              <Button variant="outline" onClick={() => setCompareMode(true)} className="text-xs">
+                <ArrowUpDown className="mr-2 h-3.5 w-3.5" />
+                Compare Scans
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => clearHistory()} className="text-xs text-cyber-danger hover:text-[#f87171] hover:bg-red-950/20 border-red-900/30">
+              <Trash2 className="mr-2 h-3.5 w-3.5" />
+              Clear Log
+            </Button>
           </div>
+        </div>
 
-          <div className="rounded-lg border border-cyber-border bg-[#0F0F0F] flex-1 flex flex-col overflow-hidden shadow-sm">
-            <div className="flex-1 overflow-auto">
-              <Table>
-                <TableHeader className="bg-[#141414]">
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                          </TableHead>
-                        )
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                        onClick={() => setSelectedScan(row.original)}
-                        className={cn(
-                          "cursor-pointer group hover:bg-[#1A1A1A]",
-                          selectedScan?.id === row.original.id && "bg-[#1A1A1A]"
-                        )}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center">
-                        <div className="flex flex-col items-center justify-center text-cyber-textMuted">
-                          <AlertCircle className="h-8 w-8 mb-2 opacity-50" />
-                          <p>No results found.</p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+        {compareMode && compareSelection.length === 2 && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 rounded-lg border border-cyber-border bg-cyber-dark p-6 shadow-xl"
+          >
+            <div className="flex items-center gap-2 mb-6 border-b border-cyber-border/30 pb-4">
+              <SplitSquareHorizontal className="text-sage-500" size={18} />
+              <h2 className="text-sm font-semibold text-cyber-white uppercase tracking-widest">Differential Signature Analysis</h2>
             </div>
             
-            {/* Pagination */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-cyber-border bg-[#141414]">
-              <div className="text-sm text-cyber-textMuted">
-                Page {table.getState().pagination.pageIndex + 1} of{" "}
-                {table.getPageCount()}
+            <div className="grid grid-cols-[auto_1fr_1fr] gap-x-6 gap-y-4 text-sm">
+              <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold flex items-center">Vector</div>
+              <div className="font-mono text-cyber-textMuted truncate bg-cyber-cardHover px-3 py-1.5 rounded">{compareSelection[0].url}</div>
+              <div className="font-mono text-cyber-textMuted truncate bg-cyber-cardHover px-3 py-1.5 rounded">{compareSelection[1].url}</div>
+
+              <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold flex items-center border-t border-cyber-border/30 pt-4">Classification</div>
+              <div className="border-t border-cyber-border/30 pt-4">
+                <Badge variant={compareSelection[0].status === 'phishing' ? 'destructive' : compareSelection[0].status === 'suspicious' ? 'warning' : 'success'} className="uppercase tracking-widest text-[9px]">{compareSelection[0].status}</Badge>
               </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+              <div className="border-t border-cyber-border/30 pt-4">
+                <Badge variant={compareSelection[1].status === 'phishing' ? 'destructive' : compareSelection[1].status === 'suspicious' ? 'warning' : 'success'} className="uppercase tracking-widest text-[9px]">{compareSelection[1].status}</Badge>
               </div>
+
+              <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold flex items-center border-t border-cyber-border/30 pt-4">Risk Score</div>
+              <div className="font-mono text-lg border-t border-cyber-border/30 pt-4 text-cyber-white">{compareSelection[0].riskScore} <span className="text-xs text-cyber-textMuted">/ 100</span></div>
+              <div className="font-mono text-lg border-t border-cyber-border/30 pt-4 text-cyber-white">{compareSelection[1].riskScore} <span className="text-xs text-cyber-textMuted">/ 100</span></div>
+
+              <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold flex items-center border-t border-cyber-border/30 pt-4">Confidence</div>
+              <div className="font-mono border-t border-cyber-border/30 pt-4 text-cyber-white">{compareSelection[0].confidence}%</div>
+              <div className="font-mono border-t border-cyber-border/30 pt-4 text-cyber-white">{compareSelection[1].confidence}%</div>
+
+              <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold flex items-center border-t border-cyber-border/30 pt-4">Target IP</div>
+              <div className="font-mono border-t border-cyber-border/30 pt-4 text-cyber-white">{compareSelection[0].features.hasIp ? 'Detected' : 'None'}</div>
+              <div className="font-mono border-t border-cyber-border/30 pt-4 text-cyber-white">{compareSelection[1].features.hasIp ? 'Detected' : 'None'}</div>
+              
+              <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold flex items-center border-t border-cyber-border/30 pt-4">Suspicious Tokens</div>
+              <div className="font-mono border-t border-cyber-border/30 pt-4 text-cyber-danger">{compareSelection[0].features.suspiciousWords?.join(", ") || "None"}</div>
+              <div className="font-mono border-t border-cyber-border/30 pt-4 text-cyber-danger">{compareSelection[1].features.suspiciousWords?.join(", ") || "None"}</div>
             </div>
+          </motion.div>
+        )}
+
+        <div className="flex-1 flex flex-col bg-cyber-dark rounded-lg border border-cyber-border/60 shadow-sm overflow-hidden min-h-0">
+          <div className="p-4 border-b border-cyber-border/50 flex flex-col sm:flex-row justify-between items-center gap-4 bg-cyber-card">
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyber-textMuted" />
+              <Input
+                placeholder="Search payloads, domains..."
+                value={globalFilter}
+                onChange={e => setGlobalFilter(e.target.value)}
+                className="pl-9 h-9 text-xs bg-cyber-dark border-cyber-border focus:border-sage-500/50"
+              />
+            </div>
+            <Button variant="outline" className="text-xs h-9" onClick={exportCSV}>
+              <Download className="mr-2 h-3.5 w-3.5" />
+              Export CSV
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-auto">
+            {scans.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-cyber-textMuted p-8">
+                <AlertCircle className="h-12 w-12 mb-4 opacity-20" />
+                <p className="text-sm">Audit log is currently empty.</p>
+              </div>
+            ) : (
+              <div className="min-w-[800px]">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="sticky top-0 bg-cyber-cardHover z-10 shadow-sm">
+                    {table.getHeaderGroups().map(headerGroup => (
+                      <tr key={headerGroup.id} className="border-b border-cyber-border/50">
+                        {headerGroup.headers.map(header => (
+                          <th key={header.id} className="px-6 py-4 font-semibold text-[10px] text-cyber-textMuted uppercase tracking-widest">
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                  <tbody className="divide-y divide-cyber-border/30">
+                    {table.getRowModel().rows.map(row => (
+                      <tr 
+                        key={row.id} 
+                        onClick={() => !compareMode && setSelectedScan(row.original)}
+                        className={cn(
+                          "transition-colors hover:bg-cyber-cardHover",
+                          compareMode ? "" : "cursor-pointer",
+                          selectedScan?.id === row.original.id ? "bg-cyber-cardHover border-l-2 border-l-sage-500" : "border-l-2 border-l-transparent"
+                        )}
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <td key={cell.id} className="px-6 py-3.5">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                
+                {/* Pagination */}
+                <div className="flex items-center justify-between px-6 py-4 border-t border-cyber-border/50 bg-cyber-dark sticky bottom-0">
+                  <div className="text-xs text-cyber-textMuted">
+                    Showing <span className="font-mono text-cyber-white">{(table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1}</span> to <span className="font-mono text-cyber-white">{Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)}</span> of <span className="font-mono text-cyber-white">{table.getFilteredRowModel().rows.length}</span> records
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => table.previousPage()}
+                      disabled={!table.getCanPreviousPage()}
+                      className="bg-cyber-cardHover border-cyber-border hover:bg-cyber-cardActive"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => table.nextPage()}
+                      disabled={!table.getCanNextPage()}
+                      className="bg-cyber-cardHover border-cyber-border hover:bg-cyber-cardActive"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Right slide-in drawer */}
         <AnimatePresence>
-          {selectedScan && (
+          {selectedScan && !compareMode && (
             <motion.div 
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 h-full w-[400px] border-l border-cyber-border bg-[#0F0F0F] z-20 flex flex-col shadow-2xl"
+              transition={{ type: "spring", damping: 30, stiffness: 250 }}
+              className="absolute top-0 right-0 h-full w-full sm:w-[480px] border-l border-cyber-border/60 bg-cyber-dark z-20 flex flex-col shadow-2xl"
             >
-              <div className="flex items-center justify-between border-b border-cyber-border p-5">
-                <h3 className="text-sm font-medium text-white">Analysis Inspector</h3>
+              <div className="flex items-center justify-between border-b border-cyber-border/60 p-6 bg-cyber-card">
+                <h3 className="text-sm font-semibold text-cyber-white flex items-center gap-2 uppercase tracking-widest"><ShieldCheck size={16} className="text-cyber-textMuted"/> Analysis Inspector</h3>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -347,7 +350,7 @@ export default function ScanHistory() {
                       setSelectedScan(null);
                       toast.success("Log record deleted");
                     }}
-                    className="h-8 w-8 text-cyber-textMuted hover:text-red-400 hover:bg-red-900/20"
+                    className="h-8 w-8 text-cyber-textMuted hover:text-cyber-danger hover:bg-red-950/20"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -355,20 +358,33 @@ export default function ScanHistory() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setSelectedScan(null)}
-                    className="h-8 w-8 text-cyber-textMuted hover:text-white"
+                    className="h-8 w-8 text-cyber-textMuted hover:text-cyber-white"
                   >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+                
+                {/* Actions */}
+                <div className="flex gap-3">
+                  <Button variant="secondary" className="flex-1 text-xs h-9 bg-cyber-cardHover hover:bg-cyber-cardActive border-cyber-border text-cyber-white" onClick={() => navigate('/scanner?url=' + encodeURIComponent(selectedScan.url))}>
+                    <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                    Open in Scanner
+                  </Button>
+                  <Button variant="outline" className="flex-1 text-xs h-9" onClick={() => navigate(`/report/${selectedScan.id}`)}>
+                    <FileText className="mr-2 h-3.5 w-3.5" />
+                    Generate Report
+                  </Button>
+                </div>
+
                 <div className="space-y-4">
                   <div>
                     <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold mb-2 block">Verdict</span>
                     <Badge 
                       variant={selectedScan.status === 'phishing' ? 'destructive' : selectedScan.status === 'suspicious' ? 'warning' : 'success'}
-                      className="px-3 py-1 uppercase tracking-widest text-[10px]"
+                      className="px-3 py-1.5 uppercase tracking-widest text-[10px]"
                     >
                       {selectedScan.status}
                     </Badge>
@@ -376,61 +392,70 @@ export default function ScanHistory() {
                   
                   <div>
                     <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold mb-2 block">Target Payload</span>
-                    <div className="rounded-md border border-cyber-border bg-[#1A1A1A] p-3">
-                      <span className="text-white break-all text-sm font-mono selection:bg-sage-500/30">{selectedScan.url}</span>
+                    <div className="rounded-md border border-cyber-border/60 bg-cyber-card p-4">
+                      <span className="text-cyber-white break-all text-sm font-mono selection:bg-sage-500/30 leading-relaxed">{selectedScan.url}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-md border border-cyber-border bg-[#1A1A1A] p-4">
+                  <div className="rounded-md border border-cyber-border/60 bg-cyber-card p-5 flex flex-col items-center text-center">
                     <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold block mb-2">Risk Score</span>
                     <span className={cn(
-                      "text-3xl font-semibold font-mono tracking-tight",
-                      selectedScan.riskScore > 70 ? 'text-red-400' : 
-                      selectedScan.riskScore > 35 ? 'text-amber-400' : 'text-green-400'
+                      "text-5xl font-medium font-mono tracking-tighter mt-1",
+                      selectedScan.riskScore > 70 ? 'text-cyber-danger' : 
+                      selectedScan.riskScore > 35 ? 'text-cyber-warning' : 'text-cyber-success'
                     )}>{selectedScan.riskScore}</span>
                   </div>
-                  <div className="rounded-md border border-cyber-border bg-[#1A1A1A] p-4">
+                  <div className="rounded-md border border-cyber-border/60 bg-cyber-card p-5 flex flex-col items-center text-center">
                     <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold block mb-2">Confidence</span>
-                    <span className="text-3xl font-semibold text-white font-mono tracking-tight">{selectedScan.confidence}%</span>
+                    <span className="text-5xl font-medium text-cyber-white font-mono tracking-tighter mt-1">{selectedScan.confidence}<span className="text-2xl text-cyber-textMuted">%</span></span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold mb-2 block">AI Analysis</span>
-                  <div className="rounded-md border border-cyber-border bg-[#1A1A1A] p-4">
-                    <p className="text-cyber-textMuted text-sm leading-relaxed">{selectedScan.aiExplanation}</p>
+                  <h3 className="text-[10px] font-semibold text-cyber-white uppercase tracking-widest border-l-2 border-cyber-accent pl-2 mb-3">AI Analysis</h3>
+                  <div className="rounded-md border border-cyber-border/60 bg-cyber-card p-5">
+                    <p className="text-cyber-dim text-sm leading-relaxed font-medium">{selectedScan.aiExplanation}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-[10px] font-semibold text-cyber-white uppercase tracking-widest border-l-2 border-cyber-accent pl-2 mb-3">Technical Evidence</h3>
+                  <div className="flex flex-col gap-1 text-sm text-cyber-textMuted">
+                    <div className="flex justify-between items-center py-2 border-b border-cyber-border/30">
+                      <span>URL Length</span><span className="text-cyber-white font-mono">{selectedScan.features.urlLength} chars</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-cyber-border/30">
+                      <span>HTTPS Encrypted</span><span className={selectedScan.features.hasHttps ? "text-cyber-success" : "text-cyber-danger"}>{selectedScan.features.hasHttps ? "Yes" : "No"}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-cyber-border/30">
+                      <span>Raw IP Host</span><span className={selectedScan.features.hasIp ? "text-cyber-danger" : "text-cyber-white"}>{selectedScan.features.hasIp ? "Detected" : "None"}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-cyber-border/30">
+                      <span>TLD Reputation</span><span className="text-cyber-white font-mono">{selectedScan.features.tldRisk}</span>
+                    </div>
+                    {selectedScan.features.suspiciousWords?.length > 0 && (
+                      <div className="flex justify-between items-start py-2">
+                        <span>Suspicious Tokens</span>
+                        <span className="text-cyber-danger font-mono text-right">{selectedScan.features.suspiciousWords.join(", ")}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <div>
-                  <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold mb-2 block">Recommendation</span>
+                  <h3 className="text-[10px] font-semibold text-cyber-white uppercase tracking-widest border-l-2 border-cyber-accent pl-2 mb-3">Recommendation</h3>
                   <div className={cn(
-                    "rounded-md border p-4 text-sm font-medium",
-                    selectedScan.status === 'phishing' ? "border-red-900/50 bg-red-900/10 text-red-400" :
-                    selectedScan.status === 'suspicious' ? "border-amber-900/50 bg-amber-900/10 text-amber-400" :
-                    "border-green-900/50 bg-green-900/10 text-green-400"
+                    "rounded-md border p-5 text-sm font-medium leading-relaxed flex gap-3",
+                    selectedScan.status === 'phishing' ? "border-cyber-danger/30 bg-cyber-danger/5 text-cyber-white" :
+                    selectedScan.status === 'suspicious' ? "border-cyber-warning/30 bg-cyber-warning/5 text-cyber-white" :
+                    "border-cyber-success/30 bg-cyber-success/5 text-cyber-white"
                   )}>
+                    {selectedScan.status === 'phishing' ? <ShieldAlert className="text-cyber-danger mt-0.5 shrink-0" size={18} /> : 
+                     selectedScan.status === 'suspicious' ? <AlertTriangle className="text-cyber-warning mt-0.5 shrink-0" size={18} /> : 
+                     <ShieldCheck className="text-cyber-success mt-0.5 shrink-0" size={18} />}
                     {selectedScan.recommendation}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-[10px] text-cyber-textMuted uppercase tracking-widest font-semibold mb-2 block">System Metadata</span>
-                  <div className="rounded-md border border-cyber-border bg-[#1A1A1A] p-4 font-mono text-xs text-cyber-textMuted space-y-3">
-                    <div className="flex justify-between border-b border-cyber-border/50 pb-2">
-                      <span>Ref ID</span>
-                      <span className="text-white">{selectedScan.id}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-cyber-border/50 pb-2">
-                      <span>Engine</span>
-                      <span className="text-white">Random Forest</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Timestamp</span>
-                      <span className="text-white">{selectedScan.timestamp}</span>
-                    </div>
                   </div>
                 </div>
               </div>

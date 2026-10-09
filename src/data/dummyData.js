@@ -238,3 +238,17 @@ export const TARGETED_BRANDS_DATA = [
   { brand: "Discord Nitro", attacks: 19 },
   { brand: "Netflix", attacks: 14 },
 ];
+
+export const FEATURE_IMPORTANCE = [
+  { feature: "Domain similarity", importance: 94 },
+  { feature: "URL entropy", importance: 82 },
+  { feature: "Suspicious tokens", importance: 78 },
+  { feature: "TLD risk", importance: 65 },
+  { feature: "URL length", importance: 41 },
+  { feature: "HTTPS absence", importance: 27 }
+];
+
+export const CONFUSION_MATRIX = {
+  safe: { safe: 172, phishing: 4 },
+  phishing: { safe: 2, phishing: 76 }
+};

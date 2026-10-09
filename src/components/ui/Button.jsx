@@ -10,7 +10,7 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
     destructive: "bg-red-900/50 text-red-400 hover:bg-red-900/70 border border-red-900",
     outline: "border border-cyber-border bg-transparent hover:bg-cyber-cardHover text-cyber-text",
     secondary: "bg-cyber-card text-cyber-text hover:bg-cyber-cardHover border border-cyber-border",
-    ghost: "hover:bg-cyber-cardHover text-cyber-text hover:text-white",
+    ghost: "hover:bg-cyber-cardHover text-cyber-text hover:text-cyber-white",
     link: "text-sage-500 underline-offset-4 hover:underline",
   }
 

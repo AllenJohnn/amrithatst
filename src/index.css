@@ -5,6 +5,50 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Warm Beige Light Mode */
+    --color-bg: #FDFCF9;
+    --color-surface-1: #FFFFFF;
+    --color-surface-2: #F4F2EC;
+    --color-surface-3: #EBE8E0;
+    --color-surface-4: #E0DDD4;
+    
+    --color-border: #D1CFC7;
+    --color-border-subtle: #E0DDD4;
+    
+    --color-text-primary: #1C1B19;
+    --color-text-muted: #4F4E4A;
+    --color-text-dim: #73726E;
+    --color-text-very-dim: #999893;
+    
+    --color-accent: 79 98 74; /* sage-600 */
+    --color-safe: 4 120 87; /* emerald-700 */
+    --color-warning: 180 83 9; /* amber-700 */
+    --color-danger: 185 28 28; /* red-700 */
+  }
+
+  :root.dark {
+    /* Graphite/Charcoal Dark Mode */
+    --color-bg: #090909;
+    --color-surface-1: #0F0F0F;
+    --color-surface-2: #141414;
+    --color-surface-3: #191919;
+    --color-surface-4: #1E1E1E;
+    
+    --color-border: #1F1F1F;
+    --color-border-subtle: #202020;
+    
+    --color-text-primary: #F2F2F2;
+    --color-text-muted: #888888;
+    --color-text-dim: #666666;
+    --color-text-very-dim: #444444;
+    
+    --color-accent: 167 182 162;
+    --color-safe: 74 222 128;
+    --color-warning: 251 191 36;
+    --color-danger: 248 113 113;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -12,8 +56,8 @@
   }
 
   body {
-    background-color: #090909;
-    color: #F2F2F2;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
     font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -42,10 +86,29 @@
 
 @layer utilities {
   .panel {
-    @apply bg-[#0F0F0F] border border-[#1F1F1F] rounded-lg shadow-sm;
+    @apply bg-cyber-dark border border-cyber-border rounded-lg shadow-sm;
   }
   
   .panel-nested {
-    @apply bg-[#141414] border border-[#1F1F1F] rounded-md shadow-sm;
+    @apply bg-cyber-card border border-cyber-border rounded-md shadow-sm;
   }
+
+  /* Force variable mapping for stuck dev servers */
+  .bg-cyber-black { background-color: var(--color-bg) !important; }
+  .bg-cyber-dark { background-color: var(--color-surface-1) !important; }
+  .bg-cyber-card { background-color: var(--color-surface-2) !important; }
+  .bg-cyber-cardHover { background-color: var(--color-surface-3) !important; }
+  .bg-cyber-cardActive { background-color: var(--color-surface-4) !important; }
+  
+  .border-cyber-border { border-color: var(--color-border) !important; }
+  .border-cyber-borderSubtle { border-color: var(--color-border-subtle) !important; }
+  
+  .text-cyber-white { color: var(--color-text-primary) !important; }
+  .text-cyber-textMuted { color: var(--color-text-muted) !important; }
+  .text-cyber-dim { color: var(--color-text-dim) !important; }
+  .text-cyber-veryDim { color: var(--color-text-very-dim) !important; }
+  
+  .text-cyber-accent { color: var(--color-accent) !important; }
+  .bg-cyber-accent { background-color: var(--color-accent) !important; }
+  .border-cyber-accent { border-color: var(--color-accent) !important; }
 }

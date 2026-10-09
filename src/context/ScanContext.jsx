@@ -25,21 +25,23 @@ export const ScanProvider = ({ children }) => {
     };
   }, [scans]);
 
-  const executeScan = async (url) => {
+  const executeScan = async (url, skipSimulation = false) => {
     if (!url || !url.trim()) return null;
     
-    setIsScanning(true);
-    setScanStep(1);
-    await new Promise(r => setTimeout(r, 450));
-
-    setScanStep(2);
-    await new Promise(r => setTimeout(r, 500));
-
-    setScanStep(3);
-    await new Promise(r => setTimeout(r, 450));
-
-    setScanStep(4);
-    await new Promise(r => setTimeout(r, 300));
+    if (!skipSimulation) {
+      setIsScanning(true);
+      setScanStep(1);
+      await new Promise(r => setTimeout(r, 450));
+  
+      setScanStep(2);
+      await new Promise(r => setTimeout(r, 500));
+  
+      setScanStep(3);
+      await new Promise(r => setTimeout(r, 450));
+  
+      setScanStep(4);
+      await new Promise(r => setTimeout(r, 300));
+    }
     
     const result = analyzeURL(url);
     setScans(prev => [result, ...prev]);

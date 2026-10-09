@@ -15,7 +15,7 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
     return (
       <span className={cn(
         baseClasses,
-        "border-[#232F23] bg-[#111711] text-cyber-success"
+        "border-cyber-success/30 bg-cyber-success/10 text-cyber-success"
       )}>
         <ShieldCheck size={isSmall ? 10 : 12} className="shrink-0" />
         SAFE
@@ -27,7 +27,7 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
     return (
       <span className={cn(
         baseClasses,
-        "border-[#332022] bg-[#1A1112] text-cyber-danger"
+        "border-cyber-danger/30 bg-cyber-danger/10 text-cyber-danger"
       )}>
         <ShieldAlert size={isSmall ? 10 : 12} className="shrink-0" />
         PHISHING
@@ -38,7 +38,7 @@ const ThreatBadge = ({ status, size = 'normal', className }) => {
   return (
     <span className={cn(
       baseClasses,
-      "border-[#332B1A] bg-[#19160F] text-cyber-warning"
+      "border-cyber-warning/30 bg-cyber-warning/10 text-cyber-warning"
     )}>
       <AlertTriangle size={isSmall ? 10 : 12} className="shrink-0" />
       SUSPICIOUS
