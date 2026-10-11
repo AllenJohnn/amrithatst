@@ -1,15 +1,12 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import { isDbConnected } from '../config/db.js';
+import { connectDB, isDbConnected } from '../config/db.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
 const getJwtSecret = () => process.env.JWT_SECRET || 'phishguards_super_secret_jwt_key_2026_fallback';
-
-// In-memory fallback cache when MongoDB is waiting for credentials
-const fallbackUsers = new Map();
 
 // Helper to generate JWT
 const generateToken = (userId, email, role) => {
@@ -27,18 +24,12 @@ router.get('/status', (req, res) => {
     success: true,
     connected,
     message: connected
-      ? 'MongoDB is actively connected.'
-      : 'MongoDB is awaiting credentials in .env (running in resilient fallback mode).',
-    envConfigured: Boolean(
-      process.env.MONGODB_URI &&
-      !process.env.MONGODB_URI.includes('<db_password>') &&
-      !process.env.MONGODB_URI.includes('<password>') &&
-      !process.env.MONGODB_URI.includes('<username>')
-    ),
+      ? 'MongoDB Atlas is actively connected.'
+      : 'MongoDB connection is offline.',
   });
 });
 
-// POST /api/auth/register - Register new user
+// POST /api/auth/register - Register new user in MongoDB
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body;
@@ -57,70 +48,49 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // If MongoDB is connected, persist in database
-    if (isDbConnected()) {
-      const existingUser = await User.findOne({ email: normalizedEmail });
-      if (existingUser) {
-        return res.status(409).json({
+    // Ensure database connection
+    if (!isDbConnected()) {
+      await connectDB();
+      if (!isDbConnected()) {
+        return res.status(503).json({
           success: false,
-          message: 'An account with this email already exists.',
+          message: 'Database is currently offline. Please ensure MongoDB is connected.',
         });
       }
-
-      const user = await User.create({
-        email: normalizedEmail,
-        password,
-        name: name || normalizedEmail.split('@')[0],
-      });
-
-      const token = generateToken(user._id, user.email, user.role);
-
-      return res.status(201).json({
-        success: true,
-        message: 'Account created successfully and saved to MongoDB.',
-        token,
-        user: {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        },
-        dbConnected: true,
-      });
     }
 
-    // Fallback mode when MongoDB credentials are not yet supplied
-    if (fallbackUsers.has(normalizedEmail)) {
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: 'An account with this email already exists in local session.',
+        message: 'An account with this email already exists. Please sign in instead.',
       });
     }
 
-    const fallbackUser = {
-      id: 'local-' + Date.now(),
+    // Create user in MongoDB with bcrypt password hash
+    const user = await User.create({
       email: normalizedEmail,
-      name: name || normalizedEmail.split('@')[0],
+      password,
+      name: name?.trim() || normalizedEmail.split('@')[0],
       role: 'analyst',
-      password, // stored locally for fallback session only
-    };
-    fallbackUsers.set(normalizedEmail, fallbackUser);
+    });
 
-    const token = generateToken(fallbackUser.id, fallbackUser.email, fallbackUser.role);
+    const token = generateToken(user._id, user.email, user.role);
 
     return res.status(201).json({
       success: true,
-      message: 'Account created in temporary fallback mode. Update MONGODB_URI in .env to persist permanently in MongoDB.',
+      message: 'Account created successfully and stored in MongoDB.',
       token,
       user: {
-        id: fallbackUser.id,
-        email: fallbackUser.email,
-        name: fallbackUser.name,
-        role: fallbackUser.role,
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
       },
-      dbConnected: false,
+      dbConnected: true,
     });
   } catch (error) {
     console.error('[Auth Register Error]:', error);
@@ -131,7 +101,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// POST /api/auth/login - Sign in user
+// POST /api/auth/login - Sign in user against MongoDB
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -139,82 +109,58 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email and password are required.',
+        message: 'Please provide both email and password.',
       });
+    }
+
+    // Ensure database connection
+    if (!isDbConnected()) {
+      await connectDB();
+      if (!isDbConnected()) {
+        return res.status(503).json({
+          success: false,
+          message: 'Database is currently offline. Please verify MongoDB connection.',
+        });
+      }
     }
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // If MongoDB is connected, verify against database
-    if (isDbConnected()) {
-      const user = await User.findOne({ email: normalizedEmail });
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'Invalid email or password.',
-        });
-      }
-
-      const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        return res.status(401).json({
-          success: false,
-          message: 'Invalid email or password.',
-        });
-      }
-
-      user.lastLogin = new Date();
-      await user.save();
-
-      const token = generateToken(user._id, user.email, user.role);
-
-      return res.json({
-        success: true,
-        message: 'Login successful. Authenticated via MongoDB.',
-        token,
-        user: {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          lastLogin: user.lastLogin,
-        },
-        dbConnected: true,
-      });
-    }
-
-    // Fallback mode when MongoDB credentials are not yet supplied
-    // Check fallback user or allow standard demo / any valid password
-    const existingFallback = fallbackUsers.get(normalizedEmail);
-    if (existingFallback && existingFallback.password !== password) {
+    // Check if account exists in MongoDB
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password.',
+        message: 'No account found with this email. Please create an account first.',
       });
     }
 
-    const fallbackUser = existingFallback || {
-      id: 'demo-analyst',
-      email: normalizedEmail,
-      name: normalizedEmail.split('@')[0],
-      role: 'analyst',
-      lastLogin: new Date(),
-    };
+    // Verify bcrypt password hash
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect password. Please try again.',
+      });
+    }
 
-    const token = generateToken(fallbackUser.id, fallbackUser.email, fallbackUser.role);
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken(user._id, user.email, user.role);
 
     return res.json({
       success: true,
-      message: 'Signed in successfully (Fallback mode. MongoDB connection pending in .env).',
+      message: 'Signed in successfully. Authenticated via MongoDB.',
       token,
       user: {
-        id: fallbackUser.id,
-        email: fallbackUser.email,
-        name: fallbackUser.name,
-        role: fallbackUser.role,
-        lastLogin: new Date(),
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        lastLogin: user.lastLogin,
       },
-      dbConnected: false,
+      dbConnected: true,
     });
   } catch (error) {
     console.error('[Auth Login Error]:', error);
@@ -225,36 +171,69 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /api/auth/me - Get current logged-in user profile
-router.get('/me', requireAuth, async (req, res) => {
+// POST /api/auth/demo - Instant Demo Login
+router.post('/demo', async (req, res) => {
   try {
-    if (isDbConnected()) {
-      const user = await User.findById(req.user.id);
-      if (user) {
-        return res.json({
-          success: true,
-          user: {
-            id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            lastLogin: user.lastLogin,
-          },
-          dbConnected: true,
-        });
-      }
+    if (!isDbConnected()) {
+      await connectDB();
     }
 
-    // Return decoded token info if user not in DB or in fallback
+    const demoEmail = 'analyst@phishguards.sec';
+    let user = await User.findOne({ email: demoEmail });
+
+    if (!user) {
+      user = await User.create({
+        email: demoEmail,
+        password: 'DemoSecurePassword2026!',
+        name: 'Demo Security Analyst',
+        role: 'analyst',
+      });
+    }
+
+    const token = generateToken(user._id, user.email, user.role);
+
+    return res.json({
+      success: true,
+      message: 'Signed in as Demo Analyst.',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+      dbConnected: isDbConnected(),
+    });
+  } catch (error) {
+    console.error('[Auth Demo Error]:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to initialize demo login.',
+    });
+  }
+});
+
+// GET /api/auth/me - Get logged-in user profile from MongoDB
+router.get('/me', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found.',
+      });
+    }
+
     return res.json({
       success: true,
       user: {
-        id: req.user.id,
-        email: req.user.email,
-        name: req.user.email ? req.user.email.split('@')[0] : 'Security Analyst',
-        role: req.user.role || 'analyst',
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        lastLogin: user.lastLogin,
       },
-      dbConnected: isDbConnected(),
+      dbConnected: true,
     });
   } catch (error) {
     return res.status(500).json({

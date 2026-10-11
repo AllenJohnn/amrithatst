@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { connectDB, isDbConnected } from './config/db.js';
 import authRoutes from './routes/auth.js';
@@ -36,6 +37,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// Ensure MongoDB connection before handling API calls (for Vercel Serverless Functions)
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api') && !isDbConnected()) {
+    try {
+      await connectDB();
+    } catch (e) {
+      console.error('[MongoDB Serverless Connect Error]:', e);
+    }
+  }
+  next();
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
@@ -60,6 +73,21 @@ app.use('/api', (req, res) => {
     message: `API endpoint ${req.method} ${req.originalUrl || req.path} not found.`,
   });
 });
+
+// Serve production frontend assets if dist folder exists
+const distPath = path.resolve(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api')) {
+      const indexPath = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        return res.sendFile(indexPath);
+      }
+    }
+    next();
+  });
+}
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -86,6 +114,8 @@ const startServer = async () => {
   });
 };
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
 
 export default app;

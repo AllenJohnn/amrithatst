@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, register } = useAuth();
+  const { login, register, demoLogin } = useAuth();
   
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [name, setName] = useState('');
@@ -38,15 +38,14 @@ const Login = () => {
   };
 
   const handleDemoLogin = async () => {
-    setEmail('analyst@phishguards.sec');
-    setPassword('demopass123');
     setIsSubmitting(true);
+    setErrorMessage('');
     try {
-      await login('analyst@phishguards.sec', 'demopass123');
-      toast.success('Signed in as Analyst (Demo Access)');
+      await demoLogin();
+      toast.success('Signed in as Demo Analyst');
       navigate('/dashboard');
-    } catch {
-      navigate('/dashboard');
+    } catch (err) {
+      toast.error('Demo login failed');
     } finally {
       setIsSubmitting(false);
     }

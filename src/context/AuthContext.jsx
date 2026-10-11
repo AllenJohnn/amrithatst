@@ -24,13 +24,12 @@ export const AuthProvider = ({ children }) => {
         setDbStatus({
           connected: Boolean(data.connected),
           message: data.message || '',
-          envConfigured: Boolean(data.envConfigured),
         });
       } else {
         setDbStatus({ connected: false, message: 'Backend unreachable' });
       }
     } catch {
-      setDbStatus({ connected: false, message: 'Backend offline (using offline client fallback)' });
+      setDbStatus({ connected: false, message: 'Backend offline' });
     }
   }, []);
 
@@ -50,16 +49,11 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || 'Invalid email or password.');
       }
 
-      const receivedUser = data.user || {
-        id: 'user-' + Date.now(),
-        email,
-        name: email.split('@')[0],
-        role: 'analyst',
-      };
-      const receivedToken = data.token || 'mock-token';
+      const receivedUser = data.user;
+      const receivedToken = data.token;
 
       setUser(receivedUser);
       setToken(receivedToken);
@@ -69,28 +63,11 @@ export const AuthProvider = ({ children }) => {
       return {
         success: true,
         user: receivedUser,
-        dbConnected: Boolean(data.dbConnected),
         message: data.message,
       };
     } catch (err) {
-      // If server is not yet running, allow local demo sign in
-      const offlineUser = {
-        id: 'offline-' + Date.now(),
-        email,
-        name: email.split('@')[0],
-        role: 'analyst',
-      };
-      setUser(offlineUser);
-      setToken('offline-token');
-      localStorage.setItem('phishguards_user', JSON.stringify(offlineUser));
-      localStorage.setItem('phishguards_token', 'offline-token');
-
-      return {
-        success: true,
-        user: offlineUser,
-        dbConnected: false,
-        message: 'Signed in locally (Backend server offline. Run "npm run server" to activate MongoDB).',
-      };
+      // Strictly fail: NEVER log in if credentials do not match or account doesn't exist
+      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -122,11 +99,47 @@ export const AuthProvider = ({ children }) => {
       return {
         success: true,
         user: receivedUser,
-        dbConnected: Boolean(data.dbConnected),
         message: data.message,
       };
     } catch (err) {
       throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const demoLogin = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/auth/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Demo login failed');
+      }
+
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('phishguards_user', JSON.stringify(data.user));
+      localStorage.setItem('phishguards_token', data.token);
+
+      return data;
+    } catch {
+      // Fallback demo user
+      const demoUser = {
+        id: 'demo-analyst',
+        email: 'analyst@phishguards.sec',
+        name: 'Demo Analyst',
+        role: 'analyst',
+      };
+      setUser(demoUser);
+      setToken('demo-token');
+      localStorage.setItem('phishguards_user', JSON.stringify(demoUser));
+      localStorage.setItem('phishguards_token', 'demo-token');
+      return { success: true, user: demoUser };
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +162,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         login,
         register,
+        demoLogin,
         logout,
         checkDbStatus,
       }}
