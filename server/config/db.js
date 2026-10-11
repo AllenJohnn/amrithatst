@@ -3,77 +3,78 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Load local .env if present (in Vercel, process.env is injected by the platform)
+try {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+} catch {
+  // Ignore in serverless environments where .env file is omitted
+}
 
-let isConnected = false;
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+let lastConnectionError = '';
 
 export const connectDB = async () => {
+  // If already connected, reuse existing socket pool
+  if (mongoose.connection.readyState === 1) {
+    return true;
+  }
+
   const uri = process.env.MONGODB_URI;
 
-  const hasPlaceholder =
-    !uri ||
-    uri.includes('<db_password>') ||
-    uri.includes('<password>') ||
-    uri.includes('<username>') ||
-    /<[^>]+>/.test(uri);
-
-  if (hasPlaceholder) {
-    console.warn(
-      '\x1b[33m%s\x1b[0m',
-      '[MongoDB] Notice: MONGODB_URI contains a password placeholder (<db_password>) in .env.'
-    );
-    console.warn(
-      '\x1b[33m%s\x1b[0m',
-      '[MongoDB] To store login details directly in your cluster, replace <db_password> in .env with your MongoDB user password.'
-    );
-    console.warn(
-      '\x1b[36m%s\x1b[0m',
-      '[MongoDB] Server running in fallback mode so the app works smoothly in the meantime.'
-    );
-    isConnected = false;
+  if (!uri) {
+    lastConnectionError = 'MONGODB_URI is not defined in Vercel Environment Variables. Please add it in your Vercel Project Settings.';
+    console.error('[MongoDB Error]:', lastConnectionError);
     return false;
   }
 
-  try {
-    const conn = await mongoose.connect(uri, {
-      dbName: process.env.DB_NAME || 'phishguards',
-      serverSelectionTimeoutMS: 8000,
-    });
+  if (/<[^>]+>/.test(uri)) {
+    lastConnectionError = 'MONGODB_URI contains a placeholder like <db_password>. Update it in Vercel Environment Variables.';
+    console.error('[MongoDB Error]:', lastConnectionError);
+    return false;
+  }
 
-    isConnected = true;
-    console.log(
-      '\x1b[32m%s\x1b[0m',
-      `[MongoDB] ✅ Successfully connected to MongoDB Atlas: ${conn.connection.host}`
-    );
-    console.log(
-      '\x1b[32m%s\x1b[0m',
-      `[MongoDB] 📁 Database: ${conn.connection.name}`
-    );
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      dbName: process.env.DB_NAME || 'phishguards',
+      serverSelectionTimeoutMS: 12000,
+      connectTimeoutMS: 12000,
+    };
+
+    cached.promise = mongoose
+      .connect(uri, opts)
+      .then((m) => {
+        console.log('[MongoDB] ✅ Connected to Atlas cluster:', m.connection.host);
+        lastConnectionError = '';
+        return m;
+      })
+      .catch((err) => {
+        cached.promise = null;
+        lastConnectionError = err.message;
+        console.error('[MongoDB Connection Failed]:', err.message);
+        throw err;
+      });
+  }
+
+  try {
+    cached.conn = await cached.promise;
     return true;
   } catch (error) {
-    isConnected = false;
-    console.error(
-      '\x1b[31m%s\x1b[0m',
-      `[MongoDB] ❌ Connection error: ${error.message}`
-    );
-    console.warn(
-      '\x1b[33m%s\x1b[0m',
-      '[MongoDB] Note: Check if your IP address is whitelisted in MongoDB Atlas Network Access (0.0.0.0/0) and credentials are correct.'
-    );
+    cached.promise = null;
+    lastConnectionError = error.message;
     return false;
   }
 };
 
-mongoose.connection.on('disconnected', () => {
-  isConnected = false;
-  console.log('[MongoDB] Disconnected from database.');
-});
+export const isDbConnected = () => {
+  return mongoose.connection.readyState === 1;
+};
 
-mongoose.connection.on('connected', () => {
-  isConnected = true;
-  console.log('[MongoDB] Connected event triggered.');
-});
-
-export const isDbConnected = () => isConnected || mongoose.connection.readyState === 1;
+export const getConnectionError = () => lastConnectionError;

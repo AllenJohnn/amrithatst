@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import { connectDB, isDbConnected } from '../config/db.js';
+import { connectDB, isDbConnected, getConnectionError } from '../config/db.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -20,12 +20,13 @@ const generateToken = (userId, email, role) => {
 // GET /api/auth/status - Check database and auth status
 router.get('/status', (req, res) => {
   const connected = isDbConnected();
+  const dbErr = getConnectionError();
   res.json({
     success: true,
     connected,
     message: connected
       ? 'MongoDB Atlas is actively connected.'
-      : 'MongoDB connection is offline.',
+      : (dbErr ? `MongoDB connection is offline: ${dbErr}` : 'MongoDB connection is offline.'),
   });
 });
 
@@ -52,9 +53,12 @@ router.post('/register', async (req, res) => {
     if (!isDbConnected()) {
       await connectDB();
       if (!isDbConnected()) {
+        const errDetail = getConnectionError();
         return res.status(503).json({
           success: false,
-          message: 'Database is currently offline. Please ensure MongoDB is connected.',
+          message: errDetail
+            ? `Database is currently offline: ${errDetail}`
+            : 'Database is currently offline. Please ensure MongoDB is connected.',
         });
       }
     }
@@ -117,9 +121,12 @@ router.post('/login', async (req, res) => {
     if (!isDbConnected()) {
       await connectDB();
       if (!isDbConnected()) {
+        const errDetail = getConnectionError();
         return res.status(503).json({
           success: false,
-          message: 'Database is currently offline. Please verify MongoDB connection.',
+          message: errDetail
+            ? `Database is currently offline: ${errDetail}`
+            : 'Database is currently offline. Please verify MongoDB connection.',
         });
       }
     }
