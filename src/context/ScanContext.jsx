@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { INITIAL_SCANS, analyzeURL } from '../data/dummyData';
 
 const ScanContext = createContext();
@@ -8,6 +8,28 @@ export const ScanProvider = ({ children }) => {
   const [activeScan, setActiveScan] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
+
+  // Sync with MongoDB backend if available
+  useEffect(() => {
+    const fetchMongoScans = async () => {
+      try {
+        const token = localStorage.getItem('phishguards_token');
+        const res = await fetch('/api/scans', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.scans && data.scans.length > 0) {
+            setScans(data.scans);
+          }
+        }
+      } catch {
+        // Fall back quietly to INITIAL_SCANS if backend is offline
+      }
+    };
+
+    fetchMongoScans();
+  }, []);
 
   const stats = useMemo(() => {
     const total = scans.length;
@@ -48,19 +70,59 @@ export const ScanProvider = ({ children }) => {
     setActiveScan(result);
     setIsScanning(false);
     setScanStep(0);
+
+    // Save scan to MongoDB backend asynchronously
+    try {
+      const token = localStorage.getItem('phishguards_token');
+      fetch('/api/scans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(result),
+      }).catch(() => {
+        // Non-blocking save
+      });
+    } catch {
+      // Ignore background persistence errors
+    }
+
     return result;
   };
 
   const deleteScan = (id) => {
-    setScans(prev => prev.filter(s => s.id !== id));
-    if (activeScan?.id === id) {
+    setScans(prev => prev.filter(s => s.id !== id && s._id !== id));
+    if (activeScan?.id === id || activeScan?._id === id) {
       setActiveScan(null);
+    }
+
+    // Delete in MongoDB backend
+    try {
+      const token = localStorage.getItem('phishguards_token');
+      fetch(`/api/scans/${id}`, {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }).catch(() => {});
+    } catch {
+      // Ignore
     }
   };
 
   const clearHistory = () => {
     setScans([]);
     setActiveScan(null);
+
+    // Clear in MongoDB backend
+    try {
+      const token = localStorage.getItem('phishguards_token');
+      fetch('/api/scans', {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }).catch(() => {});
+    } catch {
+      // Ignore
+    }
   };
 
   return (

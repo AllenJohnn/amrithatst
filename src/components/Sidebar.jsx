@@ -9,10 +9,12 @@ import {
   Shield,
 } from 'lucide-react';
 import { useScan } from '../context/ScanContext';
+import { useAuth } from '../context/AuthContext';
 import { cn } from '../utils';
 
 export default function Sidebar() {
   const { stats } = useScan();
+  const { logout } = useAuth();
 
   const navItems = [
     { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -81,6 +83,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-cyber-border space-y-1 bg-cyber-dark">
         <NavLink
           to="/login"
+          onClick={logout}
           className="flex w-full mt-2 items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-cyber-textMuted transition-colors hover:bg-cyber-danger/10 hover:text-cyber-danger"
         >
           <LogOut size={16} />

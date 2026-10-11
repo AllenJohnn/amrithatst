@@ -9,6 +9,7 @@ import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import SecurityReport from './pages/SecurityReport';
 import { ScanProvider } from './context/ScanContext';
+import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'sonner';
 import CommandPalette from './components/CommandPalette';
 import { AnimatePresence } from 'framer-motion';
@@ -67,9 +68,11 @@ function AppLayout() {
 
 function App() {
   return (
-    <ScanProvider>
-      <AppLayout />
-    </ScanProvider>
+    <AuthProvider>
+      <ScanProvider>
+        <AppLayout />
+      </ScanProvider>
+    </AuthProvider>
   );
 }
 

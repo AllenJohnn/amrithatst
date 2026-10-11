@@ -1,11 +1,14 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { User, Search, Menu, X, LayoutDashboard, ScanSearch, History, BarChart3, LogOut, Shield, Sun, Moon } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isDarkMode, setIsDarkMode] = React.useState(true);
 
@@ -70,7 +73,7 @@ export default function Navbar() {
         </button>
 
         <div className="flex items-center gap-2 text-cyber-textMuted hover:text-cyber-white transition-colors cursor-pointer ml-2">
-          <span className="text-xs hidden sm:block font-medium">analyst@phishguards.sec</span>
+          <span className="text-xs hidden sm:block font-medium">{user?.email || 'analyst@phishguards.sec'}</span>
           <div className="flex h-7 w-7 items-center justify-center rounded bg-cyber-dark border border-cyber-border">
             <User size={14} />
           </div>
@@ -121,7 +124,7 @@ export default function Navbar() {
               })}
               
               <div className="pt-6 mt-6 border-t border-cyber-border px-2">
-                <NavLink to="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 text-cyber-danger text-base font-medium">
+                <NavLink to="/login" onClick={() => { logout(); setMobileMenuOpen(false); }} className="flex items-center gap-3 text-cyber-danger text-base font-medium">
                   <LogOut size={18} />
                   <span>Log out</span>
                 </NavLink>
