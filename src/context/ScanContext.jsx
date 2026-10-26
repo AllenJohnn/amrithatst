@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { INITIAL_SCANS, analyzeURL } from '../data/dummyData';
+import { scanUrlWithML } from '../services/mlService';
 
 const ScanContext = createContext();
 
@@ -65,7 +66,13 @@ export const ScanProvider = ({ children }) => {
       await new Promise(r => setTimeout(r, 300));
     }
     
-    const result = analyzeURL(url);
+    let result = null;
+    try {
+      result = await scanUrlWithML(url);
+    } catch {
+      result = analyzeURL(url);
+    }
+
     setScans(prev => [result, ...prev]);
     setActiveScan(result);
     setIsScanning(false);

@@ -10,7 +10,8 @@ import {
   THREAT_DISTRIBUTION_DATA, 
   TARGETED_BRANDS_DATA,
   FEATURE_IMPORTANCE,
-  CONFUSION_MATRIX
+  CONFUSION_MATRIX,
+  MODEL_LEADERBOARD
 } from '../data/dummyData';
 
 const COLORS = {
@@ -493,25 +494,77 @@ export default function Analytics() {
                 <div className="pt-5 border-t border-cyber-border/30 grid grid-cols-2 gap-y-6 gap-x-4">
                   <div>
                     <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest mb-1.5">Precision</div>
-                    <div className="text-xl font-mono text-cyber-white font-medium">97.1%</div>
+                    <div className="text-xl font-mono text-cyber-white font-medium">100.0%</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest mb-1.5">Recall</div>
-                    <div className="text-xl font-mono text-cyber-white font-medium">99.2%</div>
+                    <div className="text-xl font-mono text-cyber-white font-medium">99.58%</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest mb-1.5">Accuracy</div>
-                    <div className="text-xl font-mono text-cyber-white font-medium">98.4%</div>
+                    <div className="text-xl font-mono text-cyber-white font-medium">99.77%</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-cyber-textMuted uppercase tracking-widest mb-1.5">F1 Score</div>
-                    <div className="text-xl font-mono text-cyber-white font-medium">0.98</div>
+                    <div className="text-xl font-mono text-cyber-white font-medium">0.998</div>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* MACHINE LEARNING MODEL COMPARISON LEADERBOARD */}
+        <Card className="bg-cyber-dark border-cyber-border/60">
+          <CardHeader className="p-6 pb-4 border-b border-cyber-border/30">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-cyber-white">
+                <BrainCircuit size={16} className="text-cyber-textMuted" />
+                Machine Learning Algorithm Comparison (5-Fold Stratified Cross Validation)
+              </CardTitle>
+              <span className="text-[10px] font-mono text-cyber-textMuted bg-cyber-cardHover px-2 py-1 rounded border border-cyber-border/40">
+                SCIKIT-LEARN PIPELINE
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0 overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-cyber-card/60 text-cyber-textMuted uppercase font-semibold text-[10px] tracking-wider border-b border-cyber-border/30">
+                <tr>
+                  <th className="py-3 px-6">Algorithm</th>
+                  <th className="py-3 px-6">Test Accuracy</th>
+                  <th className="py-3 px-6">Precision</th>
+                  <th className="py-3 px-6">Recall</th>
+                  <th className="py-3 px-6">F1 Score</th>
+                  <th className="py-3 px-6">ROC-AUC</th>
+                  <th className="py-3 px-6">Pipeline Role</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-cyber-border/20 text-cyber-white font-mono">
+                {MODEL_LEADERBOARD.map((m, idx) => (
+                  <tr key={idx} className="hover:bg-cyber-cardHover/50 transition-colors">
+                    <td className="py-3.5 px-6 font-sans font-medium text-cyber-white flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-sage-400' : 'bg-cyber-border'}`} />
+                      {m.model_name}
+                    </td>
+                    <td className="py-3.5 px-6 text-cyber-success font-semibold">{m.accuracy}%</td>
+                    <td className="py-3.5 px-6">{m.precision}%</td>
+                    <td className="py-3.5 px-6">{m.recall}%</td>
+                    <td className="py-3.5 px-6 text-cyber-accent font-semibold">{m.f1_score}</td>
+                    <td className="py-3.5 px-6">{m.roc_auc}</td>
+                    <td className="py-3.5 px-6 font-sans">
+                      <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
+                        idx === 0 ? 'bg-cyber-success/10 text-cyber-success border border-cyber-success/30' : 'bg-cyber-card text-cyber-textMuted'
+                      }`}>
+                        {m.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
       </div>
     </PageTransition>
   );

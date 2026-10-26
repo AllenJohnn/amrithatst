@@ -1,0 +1,272 @@
+{
+  "metadata": {
+    "model_name": "Random Forest (Ensemble)",
+    "version": "2.0.0-ML",
+    "framework": "scikit-learn",
+    "trained_at": "2026-10-26T11:55:23.674144Z",
+    "dataset_samples": 4381,
+    "train_samples": 3504,
+    "test_samples": 877,
+    "n_estimators": 120,
+    "feature_count": 26,
+    "target_classes": [
+      "safe",
+      "phishing"
+    ]
+  },
+  "metrics": {
+    "accuracy": 100.0,
+    "precision": 100.0,
+    "recall": 100.0,
+    "f1_score": 1.0,
+    "roc_auc": 1.0
+  },
+  "confusion_matrix": {
+    "true_negatives": 402,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "true_positives": 475,
+    "safe": {
+      "safe": 402,
+      "phishing": 0
+    },
+    "phishing": {
+      "safe": 0,
+      "phishing": 475
+    }
+  },
+  "model_comparison": [
+    {
+      "model_name": "Random Forest (Ensemble)",
+      "cv_f1_mean": 0.9997,
+      "cv_f1_std": 0.0005,
+      "accuracy": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0
+    },
+    {
+      "model_name": "Gradient Boosting",
+      "cv_f1_mean": 0.9997,
+      "cv_f1_std": 0.0005,
+      "accuracy": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0
+    },
+    {
+      "model_name": "Decision Tree",
+      "cv_f1_mean": 0.9997,
+      "cv_f1_std": 0.0005,
+      "accuracy": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0
+    },
+    {
+      "model_name": "Logistic Regression",
+      "cv_f1_mean": 0.9987,
+      "cv_f1_std": 0.0012,
+      "accuracy": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "suspicious_token_count",
+      "importance": 29.62
+    },
+    {
+      "feature": "suspicious_tld",
+      "importance": 15.56
+    },
+    {
+      "feature": "brand_spoofing_score",
+      "importance": 13.66
+    },
+    {
+      "feature": "is_https",
+      "importance": 8.85
+    },
+    {
+      "feature": "num_subdomains",
+      "importance": 6.52
+    },
+    {
+      "feature": "domain_entropy",
+      "importance": 3.19
+    },
+    {
+      "feature": "path_length",
+      "importance": 3.16
+    },
+    {
+      "feature": "digit_ratio",
+      "importance": 2.87
+    },
+    {
+      "feature": "domain_length",
+      "importance": 2.73
+    },
+    {
+      "feature": "num_dots",
+      "importance": 2.06
+    },
+    {
+      "feature": "letter_ratio",
+      "importance": 1.85
+    },
+    {
+      "feature": "num_slashes",
+      "importance": 1.71
+    },
+    {
+      "feature": "num_hyphens",
+      "importance": 1.69
+    },
+    {
+      "feature": "query_length",
+      "importance": 1.68
+    },
+    {
+      "feature": "has_ip",
+      "importance": 1.57
+    },
+    {
+      "feature": "vowel_consonant_ratio",
+      "importance": 0.73
+    },
+    {
+      "feature": "has_mixed_digits",
+      "importance": 0.64
+    },
+    {
+      "feature": "num_questionmarks",
+      "importance": 0.51
+    },
+    {
+      "feature": "num_equals",
+      "importance": 0.39
+    },
+    {
+      "feature": "url_length",
+      "importance": 0.38
+    },
+    {
+      "feature": "url_entropy",
+      "importance": 0.29
+    },
+    {
+      "feature": "special_char_ratio",
+      "importance": 0.26
+    },
+    {
+      "feature": "num_underscores",
+      "importance": 0.07
+    },
+    {
+      "feature": "num_at",
+      "importance": 0.02
+    },
+    {
+      "feature": "num_percent",
+      "importance": 0.0
+    },
+    {
+      "feature": "has_punycode",
+      "importance": 0.0
+    }
+  ],
+  "feature_columns": [
+    "url_length",
+    "domain_length",
+    "path_length",
+    "query_length",
+    "num_dots",
+    "num_hyphens",
+    "num_underscores",
+    "num_slashes",
+    "num_questionmarks",
+    "num_equals",
+    "num_at",
+    "num_percent",
+    "digit_ratio",
+    "letter_ratio",
+    "special_char_ratio",
+    "has_ip",
+    "is_https",
+    "num_subdomains",
+    "url_entropy",
+    "domain_entropy",
+    "suspicious_tld",
+    "suspicious_token_count",
+    "brand_spoofing_score",
+    "has_punycode",
+    "vowel_consonant_ratio",
+    "has_mixed_digits"
+  ],
+  "scaler": {
+    "mean": [
+      42.270263,
+      16.720034,
+      16.613014,
+      1.053938,
+      1.923516,
+      0.799658,
+      0.054224,
+      3.726884,
+      0.064498,
+      0.064498,
+      0.000285,
+      0.0,
+      0.042426,
+      0.772234,
+      0.185339,
+      0.074486,
+      0.625285,
+      0.637842,
+      4.140358,
+      3.275652,
+      0.375856,
+      1.281393,
+      28.350457,
+      0.0,
+      0.592002,
+      0.094749
+    ],
+    "scale": [
+      10.757936,
+      8.505779,
+      8.705927,
+      4.388679,
+      1.385828,
+      0.802991,
+      0.226459,
+      0.876772,
+      0.245637,
+      0.245637,
+      0.016891,
+      1.0,
+      0.087659,
+      0.100789,
+      0.023596,
+      0.262561,
+      0.484049,
+      1.120255,
+      0.20279,
+      0.429789,
+      0.484343,
+      1.379538,
+      42.362548,
+      1.0,
+      0.325824,
+      0.292868
+    ]
+  }
+}

@@ -1,7 +1,15 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// Force Google & Cloudflare DNS to resolve MongoDB Atlas SRV records
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // Ignore if not supported in environment
+}
 
 // Load local .env if present (in Vercel, process.env is injected by the platform)
 try {

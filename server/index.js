@@ -1,12 +1,21 @@
+import dns from 'node:dns';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+
+// Force public DNS resolvers to prevent querySrv ECONNREFUSED errors on restricted ISPs/hotspots
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (err) {
+  // Ignore if network environment restricts custom DNS
+}
 import { connectDB, isDbConnected } from './config/db.js';
 import authRoutes from './routes/auth.js';
 import scanRoutes from './routes/scans.js';
+import mlRoutes from './routes/ml.js';
 
 // Resolve __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +74,7 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/scans', scanRoutes);
+app.use('/api/ml', mlRoutes);
 
 // Fallback for unmatched API routes
 app.use('/api', (req, res) => {
@@ -100,18 +110,24 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const startServer = async () => {
-  // Attempt MongoDB connection (non-blocking, won't crash if credentials are placeholders)
-  await connectDB();
-
-  app.listen(PORT, () => {
+const startServer = () => {
+  const server = app.listen(PORT, () => {
     console.log('----------------------------------------------------');
-    console.log(`🛡️  PhishGuards Backend running at http://localhost:${PORT}`);
-    console.log(`📡 MongoDB Status: ${isDbConnected() ? '✅ Connected' : '⏳ Awaiting credentials in .env'}`);
-    console.log(`🔐 Auth API: http://localhost:${PORT}/api/auth`);
-    console.log(`📊 Scans API: http://localhost:${PORT}/api/scans`);
+    console.log(`[*] PhishGuards Backend running at http://localhost:${PORT}`);
+    console.log(`[*] Auth API: http://localhost:${PORT}/api/auth`);
+    console.log(`[*] Scans API: http://localhost:${PORT}/api/scans`);
+    console.log(`[*] ML Inference API: http://localhost:${PORT}/api/ml`);
     console.log('----------------------------------------------------');
   });
+
+  // Connect to DB asynchronously so server is immediately responsive
+  connectDB().then(() => {
+    console.log(`📡 MongoDB Status: ${isDbConnected() ? 'Connected' : 'Fallback mode'}`);
+  }).catch((err) => {
+    console.warn(`[MongoDB Warning]: ${err.message}`);
+  });
+
+  return server;
 };
 
 if (!process.env.VERCEL) {

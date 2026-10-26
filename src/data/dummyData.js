@@ -1,217 +1,173 @@
+import { localMLInference } from '../services/mlService';
+
 export const SAMPLE_URLS = [
   {
-    label: "PayPal Phish",
-    url: "https://paypal-security-update.account-verification-login.xyz/auth",
-    type: "phishing",
-  },
-  {
-    label: "Amazon Scam",
-    url: "http://192.168.1.105/amazon-prime-renewal-invoice/pay.html",
-    type: "phishing",
-  },
-  {
-    label: "Discord Nitro Phish",
-    url: "https://dlscord-app-gift-nitro.free-claim.top/nitro",
-    type: "phishing",
-  },
-  {
-    label: "Official GitHub",
-    url: "https://github.com/facebook/react",
-    type: "safe",
-  },
-  {
-    label: "Official Google",
+    label: "Google Official",
     url: "https://google.com/search?q=cybersecurity",
     type: "safe",
   },
   {
-    label: "Suspicious Redirect",
-    url: "https://bit.ly/secure-banking-portal-redirect",
-    type: "suspicious",
+    label: "Google Homoglyph (0)",
+    url: "https://go0gle.com",
+    type: "phishing",
+  },
+  {
+    label: "Google Homoglyph (@)",
+    url: "https://go@gle.com",
+    type: "phishing",
+  },
+  {
+    label: "GitHub Official",
+    url: "https://github.com/facebook/react",
+    type: "safe",
+  },
+  {
+    label: "GitHub Typosquat",
+    url: "https://githuub.com",
+    type: "phishing",
+  },
+  {
+    label: "PayPal Leetspeak (1)",
+    url: "https://paypa1.com",
+    type: "phishing",
+  },
+  {
+    label: "PayPal Scam",
+    url: "https://paypal-security-update.account-verification-login.xyz/auth",
+    type: "phishing",
+  },
+  {
+    label: "Authority Hijack (@)",
+    url: "https://google.com@phishing.com",
+    type: "phishing",
   }
 ];
 
 export const INITIAL_SCANS = [
   {
     id: "scan-1",
-    url: "https://paypal-security-update.account-verification-login.xyz/auth",
-    domain: "paypal-security-update.account-verification-login.xyz",
+    url: "https://githuub.com",
+    domain: "githuub.com",
     status: "phishing",
-    riskScore: 94,
-    confidence: 96.2,
-    timestamp: "2 mins ago",
-    date: "2026-03-09 09:22:10",
+    riskScore: 93,
+    confidence: 93.1,
+    modelProbability: 0.9309,
+    targetBrand: "github",
+    spoofingType: "typosquat_repeated_chars ('githuub' targets 'github')",
+    brandSpoofingScore: 92,
+    timestamp: "1 min ago",
+    date: "2026-03-09 09:24:10",
     features: {
-      urlLength: 68,
+      urlLength: 19,
+      domainLength: 11,
       hasIp: false,
-      dotsCount: 4,
-      hyphensCount: 3,
       hasHttps: true,
-      hasSuspiciousWords: true,
-      suspiciousWords: ["paypal", "security", "update", "verification", "login"],
-      tldRisk: "High (.xyz)",
-      subdomainsCount: 3
+      dotsCount: 1,
+      hyphensCount: 0,
+      subdomainsCount: 0,
+      urlEntropy: 3.6819,
+      domainEntropy: 3.2776,
+      suspiciousWords: [],
+      hasSuspiciousWords: false,
+      tldRisk: "Normal"
     },
-    aiExplanation: "The URL exhibits severe brand impersonation ('paypal') under an untrusted TLD (.xyz). Multiple high-urgency credential harvesting keywords were detected alongside excessive subdomains meant to bypass basic lexical filters.",
-    recommendation: "BLOCK IMMEDIATELY. Do not submit credentials or OTP codes."
+    aiExplanation: "URL evaluated by Random Forest ML Classifier (v2.0) with 93.1% confidence. Brand Impersonation / Typosquatting detected: typosquat_repeated_chars ('githuub' targets 'github').",
+    recommendation: "BLOCK ACCESS IMMEDIATELY. High probability of credential theft or brand spoofing."
   },
   {
     id: "scan-2",
     url: "https://github.com/facebook/react",
     domain: "github.com",
     status: "safe",
-    riskScore: 3,
-    confidence: 98.9,
-    timestamp: "12 mins ago",
-    date: "2026-03-09 09:12:44",
+    riskScore: 0,
+    confidence: 99.7,
+    modelProbability: 0.0029,
+    targetBrand: "github",
+    spoofingType: "official_verified",
+    brandSpoofingScore: 0,
+    timestamp: "8 mins ago",
+    date: "2026-03-09 09:17:44",
     features: {
       urlLength: 32,
+      domainLength: 10,
       hasIp: false,
       dotsCount: 1,
       hyphensCount: 0,
       hasHttps: true,
+      subdomainsCount: 0,
+      urlEntropy: 3.8421,
+      domainEntropy: 3.3219,
       hasSuspiciousWords: false,
       suspiciousWords: [],
-      tldRisk: "Low (.com)",
-      subdomainsCount: 0
+      tldRisk: "Normal"
     },
-    aiExplanation: "Legitimate domain with established global reputation, valid TLS/SSL certificates, clean lexical structure, and absence of deceptive keywords.",
-    recommendation: "SAFE. No known malicious indicators detected."
+    aiExplanation: "URL evaluated by Random Forest ML Classifier (v2.0) with 99.7% confidence. Verified legitimate official domain for brand 'github'. Valid cryptographic HTTPS identity and trusted reputation.",
+    recommendation: "PERMIT ACCESS. Normal benign internet traffic profile."
   },
   {
     id: "scan-3",
+    url: "https://paypal-security-update.account-verification-login.xyz/auth",
+    domain: "paypal-security-update.account-verification-login.xyz",
+    status: "phishing",
+    riskScore: 98,
+    confidence: 98.4,
+    modelProbability: 0.9842,
+    targetBrand: "paypal",
+    spoofingType: "brand_impersonation ('paypal' embedded in unverified domain)",
+    brandSpoofingScore: 88,
+    timestamp: "24 mins ago",
+    date: "2026-03-09 09:01:10",
+    features: {
+      urlLength: 68,
+      domainLength: 56,
+      hasIp: false,
+      dotsCount: 4,
+      hyphensCount: 3,
+      hasHttps: true,
+      subdomainsCount: 3,
+      urlEntropy: 4.412,
+      domainEntropy: 4.120,
+      hasSuspiciousWords: true,
+      suspiciousWords: ["paypal", "security", "update", "verification", "login", "auth"],
+      tldRisk: "High (.xyz)"
+    },
+    aiExplanation: "URL evaluated by Random Forest ML Classifier (v2.0) with 98.4% confidence. Brand Impersonation / Typosquatting detected: 'paypal' embedded in unverified domain. Contains high-urgency credential tokens: [paypal, security, update, verification, login, auth].",
+    recommendation: "BLOCK IMMEDIATELY. Deceptive credential harvesting infrastructure."
+  },
+  {
+    id: "scan-4",
     url: "http://192.168.1.105/amazon-prime-renewal-invoice/pay.html",
     domain: "192.168.1.105",
     status: "phishing",
-    riskScore: 91,
-    confidence: 93.8,
-    timestamp: "34 mins ago",
-    date: "2026-03-09 08:50:12",
+    riskScore: 94,
+    confidence: 94.8,
+    modelProbability: 0.9481,
+    targetBrand: "amazon",
+    spoofingType: "brand_token_in_path ('amazon')",
+    brandSpoofingScore: 55,
+    timestamp: "45 mins ago",
+    date: "2026-03-09 08:40:12",
     features: {
       urlLength: 54,
+      domainLength: 13,
       hasIp: true,
       dotsCount: 3,
       hyphensCount: 3,
       hasHttps: false,
+      subdomainsCount: 0,
+      urlEntropy: 4.102,
+      domainEntropy: 2.841,
       hasSuspiciousWords: true,
       suspiciousWords: ["amazon", "invoice", "pay"],
-      tldRisk: "Raw IP Address",
-      subdomainsCount: 0
+      tldRisk: "Raw IP"
     },
-    aiExplanation: "Direct raw IP address host with clear brand spoofing of Amazon, unencrypted HTTP transmission, and urgent payment keywords.",
-    recommendation: "CRITICAL THREAT. Raw IP hosts with payment keywords represent active scam infrastructure."
+    aiExplanation: "URL evaluated by Random Forest ML Classifier (v2.0) with 94.8% confidence. Raw numerical IP address host instead of registered domain. Unencrypted insecure HTTP protocol. Contains credential/payment tokens: [amazon, invoice, pay].",
+    recommendation: "CRITICAL THREAT. Raw IP hosts with payment tokens represent active scam infrastructure."
   }
 ];
 
 export function analyzeURL(inputUrl) {
-  let cleanUrl = inputUrl.trim();
-  if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
-    cleanUrl = "https://" + cleanUrl;
-  }
-
-  let domain = "";
-  try {
-    const parsed = new URL(cleanUrl);
-    domain = parsed.hostname;
-  } catch {
-    domain = cleanUrl.split("/")[2] || cleanUrl;
-  }
-
-  const urlLower = cleanUrl.toLowerCase();
-  const domainLower = domain.toLowerCase();
-
-  const keywordsList = [
-    "login", "verify", "account", "security", "update", "banking", "paypal",
-    "apple", "amazon", "netflix", "crypto", "wallet", "recover", "free",
-    "claim", "signin", "password", "support", "billing", "confirm", "invoice"
-  ];
-  const matchedKeywords = keywordsList.filter(k => urlLower.includes(k));
-
-  const urlLength = cleanUrl.length;
-  const dotsCount = (cleanUrl.match(/\./g) || []).length;
-  const hyphensCount = (cleanUrl.match(/-/g) || []).length;
-  const atCount = (cleanUrl.match(/@/g) || []).length;
-  const hasIp = /^(\d{1,3}\.){3}\d{1,3}$/.test(domain);
-  const hasHttps = cleanUrl.startsWith("https://");
-
-  const suspiciousTlds = [".xyz", ".top", ".club", ".tk", ".ml", ".ga", ".cf", ".gq", ".work", ".buzz"];
-  const matchedTld = suspiciousTlds.find(tld => domainLower.endsWith(tld));
-
-  let riskScore = 4;
-  if (hasIp) riskScore += 45;
-  if (!hasHttps) riskScore += 18;
-  if (matchedKeywords.length > 0) riskScore += matchedKeywords.length * 15;
-  if (dotsCount > 3) riskScore += 16;
-  if (hyphensCount >= 3) riskScore += 14;
-  if (urlLength > 60) riskScore += 12;
-  if (atCount > 0) riskScore += 35;
-  if (matchedTld) riskScore += 25;
-
-  const knownSafe = ["google.com", "github.com", "youtube.com", "microsoft.com", "linkedin.com", "wikipedia.org", "apple.com", "amazon.com"];
-  const isKnownSafe = knownSafe.some(safe => domainLower === safe || domainLower.endsWith("." + safe));
-
-  if (isKnownSafe && !hasIp && atCount === 0) {
-    riskScore = Math.min(riskScore, 5);
-  }
-
-  riskScore = Math.min(99, Math.max(2, riskScore));
-
-  let status = "safe";
-  if (riskScore >= 75) status = "phishing";
-  else if (riskScore >= 45) status = "suspicious";
-
-  const confidence = Number((88 + (riskScore > 50 ? (riskScore / 100) * 10 : ((100 - riskScore) / 100) * 10) + Math.random() * 1.5).toFixed(1));
-
-  let reasons = [];
-  if (hasIp) reasons.push("The domain is a raw numerical IP address instead of a registered domain name.");
-  if (!hasHttps) reasons.push("Insecure HTTP protocol used without SSL/TLS encryption.");
-  if (matchedKeywords.length > 0) reasons.push(`Contains high-risk credential/brand tokens: [${matchedKeywords.join(", ")}].`);
-  if (matchedTld) reasons.push(`Uses a suspicious or low-reputation top-level domain (${matchedTld}).`);
-  if (dotsCount > 3) reasons.push(`Excessive subdomain nesting (${dotsCount} dots) often used to conceal target domain.`);
-  if (hyphensCount >= 3) reasons.push(`Abnormal number of hyphens (${hyphensCount}) used in typosquatting attempts.`);
-  if (urlLength > 65) reasons.push(`Abnormal overall URL length (${urlLength} chars) typical of token-stuffed phishing payloads.`);
-  if (atCount > 0) reasons.push("Contains '@' symbol which can redirect browser credentials parsing.");
-
-  if (reasons.length === 0) {
-    reasons.push("Clean lexical structure matching typical legitimate internet traffic.");
-    reasons.push("Valid HTTPS encryption and trusted top-level domain.");
-  }
-
-  const aiExplanation = status === "phishing" 
-    ? `The URL has been classified as PHISHING with ${confidence}% model confidence. ${reasons.join(" ")}`
-    : status === "suspicious"
-    ? `The URL shows AMBIGUOUS / SUSPICIOUS indicators. ${reasons.join(" ")} Caution is advised.`
-    : `The URL is evaluated as SAFE with ${confidence}% confidence. ${reasons.join(" ")}`;
-
-  const recommendation = status === "phishing"
-    ? "BLOCK ACCESS. Do not visit or enter any sensitive personal or financial credentials."
-    : status === "suspicious"
-    ? "ISOLATE IN SANDBOX. Verify sender authenticity before interacting."
-    : "PERMIT. URL shows standard benign characteristics.";
-
-  return {
-    id: `scan-${Date.now()}`,
-    url: cleanUrl,
-    domain,
-    status,
-    riskScore,
-    confidence,
-    timestamp: "Just now",
-    date: new Date().toISOString().replace("T", " ").substring(0, 19),
-    features: {
-      urlLength,
-      hasIp,
-      dotsCount,
-      hyphensCount,
-      hasHttps,
-      hasSuspiciousWords: matchedKeywords.length > 0,
-      suspiciousWords: matchedKeywords,
-      tldRisk: matchedTld ? `High (${matchedTld})` : (hasIp ? "Raw IP" : "Normal"),
-      subdomainsCount: Math.max(0, domain.split(".").length - 2)
-    },
-    aiExplanation,
-    recommendation
-  };
+  return localMLInference(inputUrl);
 }
 
 export const SCAN_TREND_DATA = [
@@ -225,30 +181,40 @@ export const SCAN_TREND_DATA = [
 ];
 
 export const THREAT_DISTRIBUTION_DATA = [
-  { name: "Safe URLs", value: 172, color: "#00e5ff" },
-  { name: "Phishing URLs", value: 76, color: "#ff3366" },
-  { name: "Suspicious", value: 32, color: "#f59e0b" },
+  { name: "Safe URLs", value: 402, color: "#10b981" },
+  { name: "Phishing URLs", value: 469, color: "#ef4444" },
+  { name: "Suspicious", value: 24, color: "#f59e0b" },
 ];
 
 export const TARGETED_BRANDS_DATA = [
-  { brand: "PayPal", attacks: 42 },
-  { brand: "Amazon", attacks: 35 },
-  { brand: "Microsoft 365", attacks: 29 },
-  { brand: "Google Accounts", attacks: 23 },
-  { brand: "Discord Nitro", attacks: 19 },
-  { brand: "Netflix", attacks: 14 },
+  { brand: "GitHub", attacks: 58 },
+  { brand: "PayPal", attacks: 52 },
+  { brand: "Amazon", attacks: 44 },
+  { brand: "Microsoft 365", attacks: 38 },
+  { brand: "Google Accounts", attacks: 31 },
+  { brand: "Discord Nitro", attacks: 26 },
+  { brand: "Netflix", attacks: 19 },
 ];
 
 export const FEATURE_IMPORTANCE = [
-  { feature: "Domain similarity", importance: 94 },
-  { feature: "URL entropy", importance: 82 },
-  { feature: "Suspicious tokens", importance: 78 },
-  { feature: "TLD risk", importance: 65 },
-  { feature: "URL length", importance: 41 },
-  { feature: "HTTPS absence", importance: 27 }
+  { feature: "Suspicious Tokens", importance: 28.4 },
+  { feature: "Suspicious TLD Risk", importance: 16.1 },
+  { feature: "HTTPS Encryption Protocol", importance: 12.1 },
+  { feature: "Brand Impersonation / Typosquatting", importance: 10.5 },
+  { feature: "Subdomain Nesting Depth", importance: 6.8 },
+  { feature: "Domain Entropy (DGA)", importance: 3.3 },
+  { feature: "Path Length", importance: 3.1 },
+  { feature: "Special Characters (Dots/Hyphens)", importance: 2.7 }
 ];
 
 export const CONFUSION_MATRIX = {
-  safe: { safe: 172, phishing: 4 },
-  phishing: { safe: 2, phishing: 76 }
+  safe: { safe: 402, phishing: 0 },
+  phishing: { safe: 2, phishing: 469 }
 };
+
+export const MODEL_LEADERBOARD = [
+  { model_name: "Random Forest (Ensemble)", accuracy: 99.77, precision: 100.0, recall: 99.58, f1_score: 0.9979, roc_auc: 1.0, status: "Active Production" },
+  { model_name: "Gradient Boosting", accuracy: 100.0, precision: 100.0, recall: 100.0, f1_score: 1.0, roc_auc: 1.0, status: "Candidate" },
+  { model_name: "Decision Tree", accuracy: 99.77, precision: 100.0, recall: 99.58, f1_score: 0.9979, roc_auc: 0.9979, status: "Evaluated" },
+  { model_name: "Logistic Regression", accuracy: 99.77, precision: 100.0, recall: 99.58, f1_score: 0.9979, roc_auc: 0.9998, status: "Baseline" }
+];
